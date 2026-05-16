@@ -1,6 +1,6 @@
 {
   "name": "@aniketkrs/research-paper",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Enterprise-grade autonomous research paper generation skill for AI coding agents. Install via npx skills add aniketkrs/research-paper. Compatible with 50+ runtimes (Claude Code, OpenCode, Cursor, Cline, Codex, Aider, Amp, etc.).",
   "keywords": [
     "claude",

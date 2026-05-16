@@ -27,6 +27,7 @@ const { spawnSync } = require("child_process");
 
 const REPO_ROOT = path.resolve(__dirname, "..");
 const SKILL = path.join(REPO_ROOT, "skills", "research-paper");
+const SKILL_GET = path.join(REPO_ROOT, "skills", "get-research-paper");
 const VERBOSE = process.argv.includes("--verbose");
 
 let pass = 0;
@@ -62,6 +63,11 @@ function repoFile(rel) {
 function skillFile(rel) {
   const p = path.join(SKILL, rel);
   assert(exists(p), `Missing skill file: skills/research-paper/${rel}`);
+}
+
+function getSkillFile(rel) {
+  const p = path.join(SKILL_GET, rel);
+  assert(exists(p), `Missing skill file: skills/get-research-paper/${rel}`);
 }
 
 function readJson(absPath) {
@@ -204,6 +210,81 @@ test("format_bibliography.py runs against fixture", () => {
   assert(/\[1\]/.test(cited), "no IEEE [1] citation in output");
   assert(/## References/.test(cited), "no References section");
   fs.unlinkSync(path.join(fix, "small-paper-cited.tmp.md"));
+});
+
+console.log("\n• get-research-paper skill structure (skills/get-research-paper/)");
+[
+  "SKILL.md",
+  "manifest.json",
+  "instructions/core.md",
+  "workflows/search.md",
+  "workflows/synthesis.md",
+  "workflows/handoff-to-writer.md",
+  "sources/source-priority.md",
+  "sources/arxiv.md",
+  "sources/google-scholar.md",
+  "sources/semantic-scholar.md",
+  "sources/pubmed.md",
+  "prompts/search-strategy.md",
+  "prompts/summarization.md",
+  "prompts/ranking.md",
+  "templates/reading-list.md",
+  "templates/paper-summary.md",
+  "templates/briefing.md",
+  "schemas/paper-result.json",
+  "toolchains/arxiv_search.py",
+  "examples/sample-results.md",
+].forEach((f) => test(`get-research-paper/${f}`, () => getSkillFile(f)));
+
+console.log("\n• get-research-paper SKILL.md frontmatter");
+test("get-research-paper SKILL.md has YAML frontmatter", () => {
+  const text = readText(path.join(SKILL_GET, "SKILL.md"));
+  assert(text.startsWith("---"), "no opening ---");
+  const second = text.indexOf("---", 3);
+  assert(second > 0, "no closing ---");
+  const fm = text.slice(3, second);
+  assert(/name:\s*get-research-paper/.test(fm), "name not set to get-research-paper");
+  assert(/description:/.test(fm), "no description field");
+  assert(/version:/.test(fm), "no version field");
+});
+
+console.log("\n• get-research-paper manifest.json schema");
+test("get-research-paper manifest.json parses", () => readJson(path.join(SKILL_GET, "manifest.json")));
+test("get-research-paper manifest.json has required fields", () => {
+  const m = readJson(path.join(SKILL_GET, "manifest.json"));
+  ["name", "version", "description", "trigger", "capabilities",
+   "supported_sources", "files"].forEach((k) =>
+    assert(m[k] !== undefined, `manifest missing field: ${k}`));
+  assert(m.name === "get-research-paper", "name mismatch");
+  assert(/^\d+\.\d+\.\d+/.test(m.version), "version is not semver");
+  assert(Array.isArray(m.trigger.commands), "trigger.commands not array");
+  assert(m.trigger.commands.includes("/get-research-paper"),
+    "/get-research-paper command missing");
+  assert(m.trigger.commands.includes("/find-paper"),
+    "/find-paper command missing");
+});
+
+console.log("\n• get-research-paper paper-result schema");
+test("paper-result schema is valid JSON Schema", () => {
+  const s = readJson(path.join(SKILL_GET, "schemas", "paper-result.json"));
+  assert(s["$schema"], "missing $schema");
+  assert(s.type === "object", "type must be object");
+  assert(s.required && s.required.length > 0, "no required fields");
+});
+
+console.log("\n• arxiv_search.py self-test (optional)");
+function tryPythonGet(args) {
+  const r = spawnSync("python", args, { cwd: SKILL_GET, encoding: "utf-8" });
+  return { code: r.status, out: r.stdout || "", err: r.stderr || "" };
+}
+test("arxiv_search.py --self-test", () => {
+  const r = tryPythonGet(["toolchains/arxiv_search.py", "--self-test"]);
+  if (r.code !== 0) {
+    if (VERBOSE) console.log(r.err);
+    throw new Error("self-test failed");
+  }
+  assert(/urllib stdlib: True/.test(r.out), "urllib not detected");
+  assert(/xml\.etree stdlib: True/.test(r.out), "xml.etree not detected");
 });
 
 // ---------------------------------------------------------------------------

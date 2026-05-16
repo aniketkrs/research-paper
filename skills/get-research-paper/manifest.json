@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json.schemastore.org/anthropic-agent-skill.json",
+  "name": "get-research-paper",
+  "version": "1.0.0",
+  "description": "Discovers, retrieves, ranks, and summarizes real existing research papers on any topic. Searches arXiv, Google Scholar, PubMed, Semantic Scholar, and reputable open repositories; returns a curated reading list with verified DOIs, key findings, and citation-ready metadata. Hands off cleanly to the `research-paper` skill for paper writing. Runtime-neutral.",
+  "author": "Aniket Kumar (aniketkrs)",
+  "license": "MIT",
+  "homepage": "https://github.com/aniketkrs/research-paper",
+  "skill_type": "retrieval",
+  "entrypoint": "SKILL.md",
+
+  "trigger": {
+    "commands": [
+      "/get-research-paper",
+      "/get-paper",
+      "/find-paper",
+      "/find-papers",
+      "/fetch-paper",
+      "/papers-on",
+      "/scholar"
+    ],
+    "patterns": [
+      "get research paper on",
+      "get research paper about",
+      "get research paper for",
+      "get a research paper on",
+      "find research paper on",
+      "find research papers on",
+      "find research papers about",
+      "find papers on",
+      "find papers about",
+      "find me papers on",
+      "fetch research paper",
+      "fetch papers on",
+      "fetch papers about",
+      "what are the top papers on",
+      "what are the best papers on",
+      "list papers on",
+      "list research on",
+      "show me research on",
+      "show me papers on",
+      "show me research papers on",
+      "scholarly papers on",
+      "literature on",
+      "academic sources on",
+      "research on .* (topic|subject|area)"
+    ],
+    "context_signals": [
+      "research papers",
+      "find papers",
+      "scholarly sources",
+      "literature search",
+      "reading list",
+      "bibliography for"
+    ]
+  },
+
+  "tags": [
+    "research",
+    "academic",
+    "literature-search",
+    "citations",
+    "bibliography",
+    "arxiv",
+    "scholar",
+    "pubmed",
+    "semantic-scholar",
+    "claude-skill",
+    "agent-skills",
+    "anthropic"
+  ],
+
+  "capabilities": [
+    "literature-search",
+    "source-discovery",
+    "paper-summarization",
+    "citation-extraction",
+    "doi-verification",
+    "ranking-and-deduplication",
+    "field-briefing",
+    "writer-skill-handoff"
+  ],
+
+  "supported_sources": [
+    "arxiv",
+    "google-scholar",
+    "semantic-scholar",
+    "pubmed",
+    "pmc",
+    "dblp",
+    "acm-dl",
+    "ieee-xplore",
+    "openreview",
+    "crossref",
+    "retraction-watch"
+  ],
+
+  "supported_citation_styles": [
+    "harvard", "apa", "ieee", "mla",
+    "chicago-author-date", "chicago-notes",
+    "nature", "arxiv-numeric"
+  ],
+
+  "tools_required": ["filesystem-write"],
+  "tools_optional": [
+    "web-search",
+    "web-fetch",
+    "shell-exec",
+    "python3"
+  ],
+
+  "python_dependencies": {
+    "required": [],
+    "recommended": [
+      "requests>=2.31",
+      "feedparser>=6.0",
+      "pyyaml>=6.0"
+    ]
+  },
+
+  "configuration": {
+    "default_n": 10,
+    "max_n": 100,
+    "default_quality_floor": 5,
+    "default_year_range": "last-10",
+    "default_depth": "standard",
+    "default_handoff": false,
+    "verify_dois": true,
+    "check_retraction": true,
+    "deduplicate": true
+  },
+
+  "files": {
+    "entry": "SKILL.md",
+    "instructions": [
+      "instructions/core.md"
+    ],
+    "workflows": [
+      "workflows/search.md",
+      "workflows/synthesis.md",
+      "workflows/handoff-to-writer.md"
+    ],
+    "sources": [
+      "sources/arxiv.md",
+      "sources/google-scholar.md",
+      "sources/semantic-scholar.md",
+      "sources/pubmed.md",
+      "sources/source-priority.md"
+    ],
+    "prompts": [
+      "prompts/search-strategy.md",
+      "prompts/summarization.md",
+      "prompts/ranking.md"
+    ],
+    "templates": [
+      "templates/reading-list.md",
+      "templates/paper-summary.md",
+      "templates/briefing.md"
+    ],
+    "schemas": [
+      "schemas/paper-result.json"
+    ],
+    "toolchains": [
+      "toolchains/arxiv_search.py"
+    ],
+    "examples": [
+      "examples/sample-results.md"
+    ]
+  },
+
+  "integrations": {
+    "research_paper_skill": {
+      "handoff_format": "bibliography.yaml",
+      "handoff_schema": "../research-paper/schemas/citation-schema.json",
+      "writer_command": "/research \"<topic>\" --bibliography <path>"
+    }
+  },
+
+  "activation": {
+    "must_not_activate_for": [
+      "write a paper",
+      "draft a paper",
+      "review my draft",
+      "format as IEEE",
+      "casual factual question",
+      "code-only request"
+    ]
+  }
+}

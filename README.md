@@ -1,9 +1,16 @@
 # research-paper
 
-> **Enterprise-grade autonomous research paper generation skill for AI
-> coding agents.** Full papers, literature reviews, theses, whitepapers,
-> surveys, and policy briefs — with rigorous methodology, statistical
-> validation, multi-style citations, and rich visualizations.
+> **Two complementary agent skills for academic research, in one repo.**
+>
+> | Skill | What it does | Activation |
+> |---|---|---|
+> | `research-paper` | **Writes** publication-ready research papers, lit reviews, theses, whitepapers, surveys, policy briefs | `/research`, `/paper`, `/literature-review`, `/whitepaper`, `/thesis`, `/survey`, `/policy` |
+> | `get-research-paper` | **Discovers** real existing papers — searches arXiv, Scholar, PubMed, Semantic Scholar; returns a curated reading list with verified DOIs | `/get-research-paper`, `/find-paper`, `/papers-on`, `/scholar` |
+
+The two skills are designed to work together: `get-research-paper`
+discovers and curates a `bibliography.yaml`, then `research-paper`
+writes a paper using that curated bibliography — no re-searching, no
+fabricated citations.
 
 Runtime-neutral. Works with **Claude Code, OpenCode, Cursor, Cline,
 Codex, Aider, Amp, Antigravity, AiderDesk, Augment, IBM Bob,** and 50+
@@ -20,54 +27,74 @@ quality gates, and deterministic citation tooling.
 
 ## Quick install
 
-### One-liner (recommended)
+### One-liner (recommended) — installs BOTH skills
 
 ```bash
 npx skills add aniketkrs/research-paper
 ```
 
-This is the official **runtime-neutral** install path. The `npx skills`
-CLI auto-detects your active agents (Claude Code, OpenCode, Cursor,
-Cline, Codex, Aider, etc.) and installs the skill into the universal
-`.agents/skills/research-paper/` directory used by all of them.
+The `npx skills` CLI auto-detects every active agent runtime
+(Claude Code, OpenCode, Cursor, Cline, Codex, Aider, etc.) and installs
+both skills into the universal `.agents/skills/` directory used by all
+of them.
 
-To verify the install:
+### Install only one
+
+```bash
+npx skills add aniketkrs/research-paper --skill research-paper
+npx skills add aniketkrs/research-paper --skill get-research-paper
+```
+
+### Verify
 
 ```bash
 npx skills list
 npx skills find research-paper
+npx skills find get-research-paper
 ```
 
-### Pin to a version
+### Other install paths
 
 ```bash
-npx skills add aniketkrs/research-paper#v2.0.1
-```
+# Pin to a version
+npx skills add aniketkrs/research-paper#v2.1.0
 
-### Install globally (user-scope) instead of project-scope
-
-```bash
+# Globally (user-scope)
 npx skills add aniketkrs/research-paper --global
-```
 
-### Install to a specific agent only
-
-```bash
-npx skills add aniketkrs/research-paper --agent claude-code
-npx skills add aniketkrs/research-paper --agent cursor
-npx skills add aniketkrs/research-paper --agent '*'    # all agents
-```
-
-### Manual install
-
-```bash
-git clone https://github.com/aniketkrs/research-paper.git
-mkdir -p .agents/skills
-mv research-paper .agents/skills/
+# Direct from GitHub (no skills CLI)
+npx -y github:aniketkrs/research-paper install
 ```
 
 For per-platform manual install instructions, see
-**[`publishing/install.md`](publishing/install.md)**.
+**[`INSTALLATION.md`](INSTALLATION.md)**.
+
+---
+
+## End-to-end workflow (both skills together)
+
+```
+# Step 1: Discover real papers on a topic
+/get-research-paper "graph neural networks for fraud detection" \
+    --n 25 --years 2020-2024 --style ieee --depth deep --handoff
+
+# Produces:
+#   gnn-fraud-detection/
+#   ├── reading-list.md       ← human-readable curated list
+#   ├── bibliography.yaml     ← writer-ready citation database
+#   ├── briefing.md           ← 1-paragraph field synthesis
+#   └── Known-gaps.md          ← unverified items (if any)
+
+# Step 2: Write a paper using the curated bibliography
+/research "graph neural networks for fraud detection" \
+    --style ieee --depth comprehensive \
+    --bibliography ./gnn-fraud-detection/bibliography.yaml
+
+# Produces a publication-ready IEEE-style paper grounded in the real
+# papers from step 1 — no re-searching, no fabricated citations.
+```
+
+Or use either skill standalone — they don't require each other.
 
 ---
 

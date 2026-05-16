@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-paper/skills/get-research-paper/schemas/paper-result.json",
+  "title": "Paper Result",
+  "description": "A single ranked + summarized paper produced by the get-research-paper skill. Compatible with the citation-schema.json of the research-paper skill (this is a superset with discovery-specific fields).",
+  "type": "object",
+  "required": ["id", "type", "authors", "year", "title"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_\\-]+$",
+      "description": "Cite key, e.g., smith_2023_llm. Compatible with research-paper/schemas/citation-schema.json."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "article-journal",
+        "article-conference",
+        "preprint",
+        "book",
+        "chapter",
+        "report",
+        "thesis",
+        "dataset",
+        "webpage",
+        "standard"
+      ]
+    },
+    "authors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["family"],
+        "properties": {
+          "family": { "type": "string" },
+          "given": { "type": "string" },
+          "is_organization": { "type": "boolean", "default": false }
+        }
+      }
+    },
+    "year": { "type": "integer", "minimum": 1500, "maximum": 2100 },
+    "title": { "type": "string", "minLength": 3 },
+    "container": { "type": "string" },
+    "volume": { "type": ["integer", "string"] },
+    "issue": { "type": ["integer", "string"] },
+    "pages": { "type": "string" },
+    "publisher": { "type": "string" },
+    "doi": { "type": "string", "pattern": "^10\\..+/.+" },
+    "url": { "type": "string", "format": "uri" },
+    "arxiv_id": { "type": "string" },
+    "pmid": { "type": "string" },
+    "pmc_id": { "type": "string" },
+
+    "discovery": {
+      "type": "object",
+      "description": "Fields specific to discovery (not part of the writer skill's schema).",
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "arxiv", "google-scholar", "semantic-scholar", "pubmed",
+            "pmc", "dblp", "acm-dl", "ieee-xplore", "openreview",
+            "crossref", "model-knowledge"
+          ]
+        },
+        "search_query": {
+          "type": "string",
+          "description": "The query that surfaced this paper."
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Position in the reading list (1 = top)."
+        },
+        "citation_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "influential_citation_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Semantic Scholar's influential-citation metric."
+        },
+        "tldr": {
+          "type": "string",
+          "description": "Auto-generated short summary from Semantic Scholar (when available)."
+        },
+        "open_access_pdf": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+
+    "summary": {
+      "type": "string",
+      "description": "The 2-4 sentence summary written for the reading list (problem -> method -> finding -> significance).",
+      "minLength": 30
+    },
+
+    "relevance_anchor": {
+      "type": "string",
+      "description": "One-sentence 'why this matters for <topic>' line (deep depth only)."
+    },
+
+    "quality_score": {
+      "type": "object",
+      "properties": {
+        "authority": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "rigor": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "recency_relevance": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "total": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "rationale": { "type": "string" }
+      }
+    },
+
+    "verification": {
+      "type": "string",
+      "enum": ["verified", "unverified-offline", "unverified", "retracted"],
+      "default": "unverified"
+    },
+
+    "verification_trail": {
+      "type": "object",
+      "properties": {
+        "doi_resolves": { "type": ["boolean", "null"] },
+        "crossref_match": { "type": ["boolean", "null"] },
+        "retraction_check": {
+          "type": "string",
+          "enum": ["clean", "retracted", "not-checked"]
+        },
+        "arxiv_confirmed": { "type": ["boolean", "null"] },
+        "checked_at": { "type": "string", "format": "date-time" }
+      }
+    },
+
+    "incomplete_fields": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Fields the skill couldn't fill — surface in Known-gaps.md."
+    },
+
+    "duplicate_of": {
+      "type": "string",
+      "description": "If this entry was a near-duplicate of another, the cite_key of the canonical version."
+    }
+  }
+}

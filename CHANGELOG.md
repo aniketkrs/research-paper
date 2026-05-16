@@ -4,6 +4,103 @@ All notable changes to **research-paper** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and the
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] — 2024-05-12
+
+### Added — second skill: `get-research-paper`
+
+The repo now ships **two complementary skills**:
+
+| Skill | Purpose |
+|---|---|
+| `research-paper` (existing) | **Writes** research papers, lit reviews, theses, whitepapers, surveys, policy briefs |
+| **`get-research-paper`** (new) | **Discovers** real existing papers — searches arXiv, Google Scholar, PubMed, Semantic Scholar; returns a curated reading list with verified DOIs |
+
+### `get-research-paper` highlights
+
+- **Slash commands:** `/get-research-paper`, `/get-paper`, `/find-paper`,
+  `/find-papers`, `/fetch-paper`, `/papers-on`, `/scholar`.
+- **Natural-language triggers:** "get research paper on [topic]",
+  "find papers about [topic]", "what are the top papers on [topic]",
+  "literature on [topic]", etc.
+- **Multi-source search:** arXiv, Google Scholar, Semantic Scholar,
+  PubMed/PMC, DBLP, ACM DL, IEEE Xplore, OpenReview — auto-routed by
+  detected domain.
+- **Real DOI verification** via Crossref + arXiv + Retraction Watch
+  (when web tools available).
+- **Three-dimensional ranking:** authority (0–4) + rigor (0–3) +
+  recency-relevance (0–3) = total (0–10), with quality floor.
+- **Diversity heuristics:** per-author cap, per-venue cap, ≥ 1 review,
+  ≥ 1 foundational paper.
+- **2–4 sentence summaries** per paper using
+  problem → method → finding → significance structure.
+- **Three audience registers:** academic / technical / general.
+- **Working Python toolchain** (`toolchains/arxiv_search.py`) — direct
+  arXiv API queries with polite ~3s pacing, parses with `feedparser`
+  if available else stdlib `xml.etree`. **No required dependencies**;
+  uses Python stdlib `urllib` if `requests` isn't installed.
+- **Clean handoff to writer skill:** `--handoff` produces a
+  `bibliography.yaml` consumable by `/research --bibliography <path>`.
+
+### `get-research-paper` structure
+
+```
+skills/get-research-paper/
+├── SKILL.md                            # Entry point
+├── manifest.json                       # Metadata + triggers
+├── instructions/core.md                # Operating principles
+├── workflows/
+│   ├── search.md                        # Master pipeline
+│   ├── synthesis.md                     # Field briefing
+│   └── handoff-to-writer.md             # Bridge to research-paper
+├── sources/
+│   ├── source-priority.md               # Per-domain decision tree
+│   ├── arxiv.md                          # arXiv API guide
+│   ├── google-scholar.md                  # Scholar via WebSearch
+│   ├── semantic-scholar.md                # Semantic Scholar API
+│   └── pubmed.md                         # PubMed / PMC via E-utilities
+├── prompts/
+│   ├── search-strategy.md                # Build the search plan
+│   ├── summarization.md                  # 2-4 sentence summaries
+│   └── ranking.md                        # 3-dim quality rubric
+├── templates/
+│   ├── reading-list.md                   # User-facing artifact
+│   ├── paper-summary.md                  # Per-paper block
+│   └── briefing.md                       # 1-3 paragraph synthesis
+├── schemas/
+│   └── paper-result.json                 # Output schema
+├── toolchains/
+│   └── arxiv_search.py                   # Direct arXiv API tool
+└── examples/
+    └── sample-results.md                 # End-to-end example output
+```
+
+### Updated — root README
+
+- Now leads with the dual-skill table.
+- New "End-to-end workflow" example showing how the two skills chain.
+- `--skill <name>` install option for installing one skill only.
+
+### Updated — `research-paper`
+
+- Version bumped to 2.1.0 to match repo version.
+- No functional changes; the writer skill is unchanged from v2.0.2.
+
+### Updated — tests
+
+- 79/79 tests pass (was 54).
+- New tests cover `get-research-paper` structure, manifest, schema,
+  and `arxiv_search.py` self-test.
+
+### Verified
+
+- Live arXiv API call returns real papers
+  (e.g., "graph neural networks" → real cite key `joshi_2025_transformers`).
+- `npx skills add aniketkrs/research-paper --list` will detect both
+  skills.
+- Direct installer (`bin/install.js`) covers both skills.
+
+---
+
 ## [2.0.2] — 2024-05-12
 
 ### Restructured for skills.sh registry indexing
