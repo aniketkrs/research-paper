@@ -8,9 +8,8 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed — date freshness (no more silent training-cutoff drift)
 
-User flagged that the agent was generating papers anchored to its
-training-data cutoff (~2022 era data) instead of using current
-information. Fix:
+The agent was anchoring papers to its training-data cutoff (~2022 era)
+instead of using current dates. Fix:
 
 - **New `instructions/freshness.md`** in all three skills with the
   full date-anchoring protocol.
@@ -19,8 +18,8 @@ information. Fix:
 - **Phase 0 added to `get-research-paper/workflows/search.md`** —
   search plan can't be built before today's date is resolved.
 - Both Phase 0 phases run `date -u +%Y-%m-%d` (or check runtime
-  context, or ask the user) — never silently default to the
-  training-cutoff date.
+  context, or ask) — never silently default to the training-cutoff
+  date.
 - **Year-range flags are now relative to today.** `--years last-3`
   resolves to `(today.year - 3, today.year)`, not to a hardcoded
   range.
@@ -45,8 +44,9 @@ information. Fix:
 
 ### Fixed — installer no longer prompts for which skills to install
 
-User flagged that `npx skills add aniketkrs/research-paper` asked
-which skills to install, confusing newcomers. Fix:
+`npx skills add aniketkrs/research-paper` was asking which of the
+three skills to install before proceeding, which made the install
+slower than necessary. Fix:
 
 - **README and INSTALLATION** now lead with the non-interactive
   command:
@@ -56,8 +56,8 @@ which skills to install, confusing newcomers. Fix:
 - **`bin/install.js` (direct installer) auto-discovers all skills
   under `skills/` and installs them in one shot by default.** No
   more hardcoded single-skill behavior.
-- New `--skill <name>` flag for the direct installer if the user
-  wants only one (rare).
+- New `--skill <name>` flag for the direct installer when only one
+  is wanted.
 - New `discoverSkills()` function reads `skills/<name>/SKILL.md`
   to enumerate skills at runtime.
 - `--help` output now lists discovered skills with their versions.
@@ -162,7 +162,7 @@ installed:
 ### Updated README
 
 - Complete rewrite. Removed the "merged successor of …" lineage
-  passage per user feedback.
+  passage.
 - New layout optimized for readability: hero install command at the
   top, three-skill table, end-to-end workflow diagram, supported file
   formats prominently displayed, troubleshooting matrix.
@@ -290,17 +290,15 @@ skills/read-research-paper/
 
 ### Architecture: the "don't bluff" cascade
 
-The skill addresses user feedback to avoid bluffing when sources
-aren't available. Honest design:
+The skill is designed not to bluff when sources aren't available:
 
 - **No internet-wide crawl** — that's not what skills do. We use
   search APIs (arXiv, Crossref) plus a bundled corpus + local cache.
 - **No shared backend across users** — caches are per-installation.
   Alice's cache doesn't help Bob.
-- **What we DO ship:** a curated, version-controlled bundled corpus
-  that travels with the skill. Every user gets the same baseline
-  of high-quality anchor papers on common topics, plus a local
-  cache that grows from there.
+- **The bundled corpus** is a curated, version-controlled set of
+  canonical anchor papers that travels with the skill. Every install
+  gets the same baseline; the local cache grows from there.
 
 ### Updated — `get-research-paper`
 
@@ -435,13 +433,13 @@ skills/get-research-paper/
 
 ### Restructured for skills.sh registry indexing
 
-User feedback pointed out that public skill registries (skills.sh) index
-skills from the `<repo>/skills/<name>/` convention used by multi-skill
-collections. After cross-checking the live `npx skills find` output:
+Public skill registries (skills.sh) index from the
+`<repo>/skills/<name>/` convention used by multi-skill collections.
+Cross-checking the live `npx skills find` output confirmed:
 
 - Repos like `vercel-labs/agent-skills`, `firecrawl/firecrawl-workflows`,
-  `seabbs/skills`, etc. are all indexed because they use this layout.
-- My v2.0.0 / v2.0.1 layout (skill at root) worked for direct
+  `seabbs/skills`, etc. are indexed because they use this layout.
+- The v2.0.0 / v2.0.1 layout (skill at root) worked for direct
   `npx skills add aniketkrs/research-paper` but was NOT indexed by
   `npx skills find`.
 
@@ -509,9 +507,9 @@ research-paper/                  ← repo root
 
 ### Why
 
-User feedback flagged Claude-specific branding (description, install
-paths, language). Investigation against the live `npx skills` CLI
-confirmed:
+The Claude-specific branding in v2.0.0 (description, install paths,
+language) didn't match the runtime-neutral nature of the skill.
+Investigation against the live `npx skills` CLI confirmed:
 
 1. The repo structure was **already correct** — `npx skills` detected
    the skill at root via `SKILL.md` (no `skills/<name>/skill.md`
