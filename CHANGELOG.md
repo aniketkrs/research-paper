@@ -4,6 +4,50 @@ All notable changes to **research-paper** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and the
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.0.1] — 2024-05-12
+
+### Changed (de-vendor-locking)
+
+- **Description and SKILL.md** rewritten to be runtime-neutral. The
+  skill is no longer described as a "Claude Agent Skill" — it's an
+  "agent skill" that works with **any** of 50+ supported runtimes
+  (Claude Code, OpenCode, Cursor, Cline, Codex, Aider, Amp,
+  Antigravity, AiderDesk, Augment, IBM Bob, etc.).
+- **Direct installer** (`bin/install.js`) now defaults to the
+  runtime-neutral `.agents/skills/` directory used by the official
+  `npx skills` CLI, instead of `~/.claude/skills/`. Environment override
+  variable renamed `CLAUDE_SKILLS_DIR` → `AGENT_SKILLS_DIR`.
+- **README and INSTALLATION** lead with the official `npx skills add`
+  CLI as the recommended install path. Per-runtime manual install
+  instructions kept as fallbacks.
+
+### Verified
+
+- `npx skills add aniketkrs/research-paper` end-to-end (clones, detects
+  agents, installs into `.agents/skills/research-paper/`, symlinks to
+  per-runtime locations for 50+ agents).
+- `npx skills find research-paper` returns the skill metadata.
+- Direct installer (`npx -y github:aniketkrs/research-paper install`)
+  works as a fallback when `npx skills` isn't available.
+
+### Why
+
+User feedback flagged Claude-specific branding (description, install
+paths, language). Investigation against the live `npx skills` CLI
+confirmed:
+
+1. The repo structure was **already correct** — `npx skills` detected
+   the skill at root via `SKILL.md` (no `skills/<name>/skill.md`
+   restructuring needed).
+2. But the skill description, the README, and the direct installer
+   were unnecessarily Claude-flavored. Fixed in this release.
+
+The `npx skills` CLI is the runtime-neutral standard; this release
+aligns the skill's documentation and direct installer with that
+convention.
+
+---
+
 ## [2.0.0] — 2024-05-12
 
 ### Major refactor and merge

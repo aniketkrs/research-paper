@@ -1,60 +1,72 @@
 # research-paper
 
-> **Enterprise-grade Claude Agent Skill for autonomous, publication-ready
-> research paper generation.** Full papers, literature reviews, theses,
-> whitepapers, surveys, and policy briefs — with rigorous methodology,
-> statistical validation, multi-style citations, and rich visualizations.
+> **Enterprise-grade autonomous research paper generation skill for AI
+> coding agents.** Full papers, literature reviews, theses, whitepapers,
+> surveys, and policy briefs — with rigorous methodology, statistical
+> validation, multi-style citations, and rich visualizations.
+
+Runtime-neutral. Works with **Claude Code, OpenCode, Cursor, Cline,
+Codex, Aider, Amp, Antigravity, AiderDesk, Augment, IBM Bob,** and 50+
+other agents via the `npx skills` installer.
 
 This skill is the merged, refactored, and upgraded successor to
 [`research-paper-writer`](https://github.com/aniketkrs/research-paper-writer)
 and [`research-paper-engine`](https://github.com/aniketkrs/research-paper-engine).
 It takes the strongest pieces of each and adds production-grade
 multi-agent orchestration, long-context handling, persistent memory,
-quality gates, and an installable npm package.
+quality gates, and deterministic citation tooling.
 
 ---
 
 ## Quick install
 
-### One-liner (works today, no npm account required)
+### One-liner (recommended)
 
 ```bash
-npx -y github:aniketkrs/research-paper install
+npx skills add aniketkrs/research-paper
 ```
 
-This drops the skill into your active skills directory
-(`~/.claude/skills/` for Claude Code, `~/.config/opencode/skills/` for
-OpenCode, etc.). Restart your session and the skill activates on
-academic-writing requests.
+This is the official **runtime-neutral** install path. The `npx skills`
+CLI auto-detects your active agents (Claude Code, OpenCode, Cursor,
+Cline, Codex, Aider, etc.) and installs the skill into the universal
+`.agents/skills/research-paper/` directory used by all of them.
 
-### From npm (when published)
+To verify the install:
 
 ```bash
-npx @aniketkrs/research-paper install
+npx skills list
+npx skills find research-paper
 ```
 
-### Pin a version
+### Pin to a version
 
 ```bash
-npx -y github:aniketkrs/research-paper#v2.0.0 install
+npx skills add aniketkrs/research-paper#v2.0.1
 ```
 
-### Project-scope install
+### Install globally (user-scope) instead of project-scope
 
 ```bash
-npx -y github:aniketkrs/research-paper install --scope project
+npx skills add aniketkrs/research-paper --global
+```
+
+### Install to a specific agent only
+
+```bash
+npx skills add aniketkrs/research-paper --agent claude-code
+npx skills add aniketkrs/research-paper --agent cursor
+npx skills add aniketkrs/research-paper --agent '*'    # all agents
 ```
 
 ### Manual install
 
 ```bash
 git clone https://github.com/aniketkrs/research-paper.git
-mkdir -p ~/.claude/skills
-mv research-paper ~/.claude/skills/
+mkdir -p .agents/skills
+mv research-paper .agents/skills/
 ```
 
-For per-platform instructions (Claude Desktop, claude.ai, the Anthropic
-API/SDK, OpenCode, Aider, Cursor, Cline), see
+For per-platform manual install instructions, see
 **[`publishing/install.md`](publishing/install.md)**.
 
 ---
@@ -101,10 +113,7 @@ What it does **not** do:
 
 ---
 
-## What's new in v2.0.0
-
-This is a major refactor. The skill is now built around four explicit
-architectural pillars:
+## Architectural pillars
 
 ### 1. Multi-agent orchestration
 
@@ -151,14 +160,14 @@ artifacts.
 
 ```
 research-paper/
-├── SKILL.md                          # Entry point (Claude reads this)
+├── SKILL.md                          # Entry point (the agent reads this)
 ├── manifest.json                     # Skill manifest / metadata
-├── package.json                      # npm packaging for npx install
+├── package.json                      # npm metadata (for direct npx install)
 ├── README.md                         # This file
 ├── INSTALLATION.md                   # Per-platform install
 ├── CHANGELOG.md                      # Versioned changes
 ├── LICENSE                           # MIT
-├── bin/                              # npx installer
+├── bin/                              # Direct npx installer (alternative path)
 │   └── install.js
 ├── instructions/                     # Core operating instructions
 │   ├── core.md
@@ -171,125 +180,27 @@ research-paper/
 │   ├── routing.md                    # Format / style / depth routing
 │   └── failure-handling.md           # Per-phase recovery matrix
 ├── workflows/                        # Phase-specific playbooks
-│   ├── full-paper.md
-│   ├── literature-review.md
-│   ├── data-analysis-pipeline.md
-│   ├── visual-generation-pipeline.md
-│   ├── citation-pipeline.md
-│   ├── validation-pipeline.md
-│   └── ... (more)
-├── prompts/                          # Internal sub-prompts
-│   ├── research-planning.md
-│   ├── literature-search.md
-│   ├── methodology-design.md
-│   ├── data-analysis.md
-│   ├── visualization-planning.md
-│   ├── writing-prompts.md
-│   ├── citation-prompts.md
-│   ├── review-prompts.md
-│   └── simplification-prompts.md
+├── prompts/                          # Internal sub-prompts (×9)
 ├── citation_engine/                  # First-class citation system
-│   ├── citation-styles.md
-│   ├── bibliography-generation.md
-│   ├── deduplication.md
-│   ├── credibility-scoring.md
-│   ├── source-evaluation.md
-│   └── styles/
-│       ├── harvard.md, apa.md, ieee.md, mla-chicago.md
 ├── visualization_engine/             # Chart-selection brain
-│   ├── decision-engine.md
-│   ├── chart-templates.md            # Python templates
-│   ├── caption-generator.md
-│   └── visualization-guide.md
 ├── methodology_engine/               # Research design + stats
-│   ├── frameworks.md
-│   ├── sampling.md
-│   ├── statistical-tests.md
-│   ├── methodology-guide.md
-│   └── statistical-methods.md
-├── academic_formats/                 # Per-venue style notes
-│   ├── overview.md
-│   ├── arxiv.md, ieee.md, acm.md, nature.md, harvard.md
+├── academic_formats/                 # Per-venue style notes (×5)
 ├── templates/                        # 10 paper templates
-│   ├── arxiv-paper.md
-│   ├── ieee-paper.md
-│   ├── acm-paper.md
-│   ├── nature-paper.md
-│   ├── harvard-paper.md
-│   ├── literature-review.md
-│   ├── thesis-chapter.md
-│   ├── whitepaper.md
-│   ├── survey-paper.md
-│   └── policy-paper.md
 ├── validators/                       # Mechanical validators
-│   ├── citation-validator.md
-│   ├── methodology-validator.md
-│   └── quality-rubric.md
 ├── review_pipeline/                  # Simulated peer review
-│   ├── three-personas.md
-│   └── peer-review.md
-├── rubrics/                          # Quality rubrics
-│   ├── academic-quality.md
-│   ├── methodology-rigor.md
-│   ├── citation-quality.md
-│   ├── visual-quality.md
-│   └── publication-readiness.md
+├── rubrics/                          # Quality rubrics (×5)
 ├── quality_control/                  # Hard-quality gates
-│   ├── publication-checklist.md
-│   ├── known-gaps-protocol.md
-│   └── final-gate.md
 ├── long_context/                     # Long-paper handling
-│   ├── strategy.md
-│   ├── chunking.md
-│   └── multi-file-output.md
 ├── memory/                           # Persistent memory protocols
-│   ├── citation-memory.md
-│   ├── methodology-memory.md
-│   └── session-state.md
-├── style_guides/                     # Writing style + voice
-│   ├── academic-tone.md
-│   └── writing-style-guide.md
-├── schemas/                          # JSON Schemas
-│   ├── paper-schema.json
-│   ├── citation-schema.json
-│   ├── citation-database-schema.json
-│   ├── figure-schema.json
-│   ├── table-schema.json
-│   └── dataset-schema.json
-├── toolchains/                       # Working Python helpers
-│   ├── format_bibliography.py        # Citation pipeline (deterministic)
-│   ├── validate_citations.py         # Citation validator
-│   ├── extract_references.py         # Orphan / missing detector
-│   ├── analyze_data.py               # Data-analysis pipeline
-│   ├── generate_charts.py            # Chart renderer (matplotlib + Mermaid fallback)
-│   ├── statistical_validation.py     # Statistical-claim auditor
-│   └── generate_paper.py             # Project bootstrapper
+├── style_guides/                     # Writing voice + tone
+├── schemas/                          # JSON Schemas (×6)
+├── toolchains/                       # Working Python helpers (×7)
 ├── datasets/                         # Sample datasets
-│   └── sample-analysis-data.csv
 ├── examples/                         # End-to-end sample papers
-│   ├── sample-paper-arxiv.md
-│   ├── sample-literature-review.md
-│   ├── sample-data-analysis.md
-│   ├── sample-paper-excerpt.md
-│   ├── bibliography.example.yaml
-│   └── sample-visualizations/
 ├── publishing/                       # Per-platform install docs
-│   └── install.md
-├── docs/                             # Extended documentation
-│   ├── architecture.md
-│   ├── merge-report.md               # How v2.0 was built
-│   ├── extending.md
-│   ├── design-decisions.md
-│   ├── faq.md
-│   └── best-practices.md
-├── tests/                            # Lightweight test runner
-│   ├── README.md
-│   ├── test-runner.js
-│   ├── fixtures/
-│   └── golden-outputs/
+├── docs/                             # Architecture, merge-report, FAQ, etc.
+├── tests/                            # Lightweight test runner (53 assertions)
 └── assets/                           # LaTeX / chart / diagram helpers
-    └── latex-templates/
-        └── latex-preamble.tex
 ```
 
 ---
@@ -308,9 +219,7 @@ The skill activates on **slash commands** (preferred):
 | `/survey <topic>`            | State-of-the-art / survey paper            |
 | `/policy <topic>`            | Policy brief or full policy paper          |
 
-…or on **natural-language requests** matching academic-writing intents
-("write a research paper on …", "do a literature review on …",
-"format this as IEEE …", "analyze this CSV and write up findings").
+…or on **natural-language requests** matching academic-writing intents.
 
 It does **not** activate for blog posts, tweets, marketing copy, or
 single-paragraph answers.
@@ -360,7 +269,7 @@ node tests/test-runner.js
 
 ## Try it
 
-After installing, in your Claude / agent session:
+After installing, in your agent session:
 
 > `/research "Graph neural networks for fraud detection" --style ieee --depth comprehensive`
 
@@ -389,6 +298,20 @@ The skill is modular:
   new agent's contract.
 
 See **[`docs/extending.md`](docs/extending.md)** for the full guide.
+
+---
+
+## Compatibility
+
+This is a runtime-neutral agent skill. The `npx skills` installer
+detects and installs into 50+ agent runtimes including:
+
+| Universal agents | Symlink-supported agents |
+|---|---|
+| Amp, Antigravity, Cline, Codex, Cursor (+10 more) | AiderDesk, Augment, IBM Bob, Claude Code, OpenCode (+35 more) |
+
+Run `npx skills add aniketkrs/research-paper --list` to see the full
+list of agents detected on your machine.
 
 ---
 

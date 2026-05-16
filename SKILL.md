@@ -1,14 +1,15 @@
 ---
 name: research-paper
-description: Enterprise-grade Claude Agent Skill for autonomous, publication-ready research paper generation — full papers, literature reviews, theses, whitepapers, surveys, policy briefs — with rigorous methodology, statistical validation, multi-style citations (Harvard / APA / IEEE / MLA / Chicago / Nature / arXiv-numeric), and rich visualizations. Activates on slash commands (`/research`, `/paper`, `/literature-review`, `/whitepaper`, `/thesis`, `/survey`, `/policy`) and on natural-language academic-writing requests.
+description: Enterprise-grade autonomous research paper generation skill for AI coding agents — full papers, literature reviews, theses, whitepapers, surveys, policy briefs — with rigorous methodology, statistical validation, multi-style citations (Harvard / APA / IEEE / MLA / Chicago / Nature / arXiv-numeric), and rich visualizations. Activates on slash commands (`/research`, `/paper`, `/literature-review`, `/whitepaper`, `/thesis`, `/survey`, `/policy`) and on natural-language academic-writing requests. Runtime-neutral — works with Claude Code, OpenCode, Cursor, Cline, Codex, Aider, Amp, Antigravity, and 50+ agents via the `npx skills` installer.
 license: MIT
-version: 2.0.0
+version: 2.0.1
 ---
 
 # Research Paper
 
-A production-grade Claude Agent Skill that turns Claude into a **multi-agent
-research system**:
+A production-grade agent skill that turns any compatible coding agent
+(Claude Code, OpenCode, Cursor, Cline, Codex, Aider, Amp, Antigravity,
+and 50+ others) into a **multi-agent research system**:
 
 > Orchestrator → Researcher → Methodologist → Analyst → Visualizer
 > → Writer → Citation engine → Validator → Reviewer → Publisher.

@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/anthropic-agent-skill.json",
   "name": "research-paper",
-  "version": "2.0.0",
-  "description": "Enterprise-grade autonomous research paper generation system. Produces publication-ready academic papers, literature reviews, theses, whitepapers, surveys, and policy briefs with rigorous methodology, statistical validation, multi-style citations, and rich visualizations. Multi-agent ready, slash-command activated.",
+  "version": "2.0.1",
+  "description": "Enterprise-grade autonomous research paper generation skill for AI coding agents. Produces publication-ready academic papers, literature reviews, theses, whitepapers, surveys, and policy briefs with rigorous methodology, statistical validation, multi-style citations, and rich visualizations. Multi-agent ready, slash-command activated. Runtime-neutral — works with Claude Code, OpenCode, Cursor, Cline, Codex, Aider, and 50+ agents via the `npx skills` installer.",
   "author": "Aniket Kumar (aniketkrs)",
   "license": "MIT",
   "homepage": "https://github.com/aniketkrs/research-paper",

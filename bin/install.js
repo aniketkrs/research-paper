@@ -1,21 +1,31 @@
 #!/usr/bin/env node
 /**
- * research-paper installer
- * ========================
+ * research-paper installer (alternative to `npx skills add`)
+ * ==========================================================
  *
- * Copies the skill into a Claude / Agent Skills runtime directory.
+ * The PRIMARY recommended install path is:
+ *   npx skills add aniketkrs/research-paper
+ *
+ * That's the runtime-neutral universal installer that detects all
+ * compatible agent runtimes (Claude Code, OpenCode, Cursor, Cline,
+ * Codex, Aider, Amp, Antigravity, AiderDesk, Augment, IBM Bob, and
+ * 50+ others) and installs the skill into the universal
+ * `.agents/skills/` directory used by all of them.
+ *
+ * This script is a SECONDARY direct-install fallback for users who
+ * want to install without `npx skills`. It copies this repository
+ * into a target skills directory.
  *
  * Usage:
- *   npx @aniketkrs/research-paper install [--target <path>] [--scope user|project]
- *   npx @aniketkrs/research-paper uninstall [--target <path>]
- *   npx @aniketkrs/research-paper status [--target <path>]
- *   npx @aniketkrs/research-paper --help
+ *   npx -y github:aniketkrs/research-paper install [--target <path>] [--scope user|project]
+ *   npx -y github:aniketkrs/research-paper uninstall [--target <path>]
+ *   npx -y github:aniketkrs/research-paper status [--target <path>]
+ *   npx -y github:aniketkrs/research-paper --help
  *
  * Default targets (in order of preference):
- *   - $CLAUDE_SKILLS_DIR (env override)
- *   - ~/.claude/skills/        (Claude Code, user scope)
- *   - .claude/skills/          (Claude Code, project scope, when --scope project)
- *   - ~/.config/opencode/skills/ (OpenCode)
+ *   - $AGENT_SKILLS_DIR (env override)
+ *   - <cwd>/.agents/skills/    (project scope, runtime-neutral, universal)
+ *   - ~/.agents/skills/         (user scope, runtime-neutral, universal)
  */
 
 "use strict";
@@ -51,17 +61,18 @@ function parseArgs(argv) {
 }
 
 // ---------------------------------------------------------------------------
-// Target resolution
+// Target resolution — runtime-neutral, matches `npx skills` convention
 // ---------------------------------------------------------------------------
 function resolveTarget(opts) {
   if (opts.target) return path.resolve(opts.target);
-  if (process.env.CLAUDE_SKILLS_DIR) {
-    return path.resolve(process.env.CLAUDE_SKILLS_DIR);
+  if (process.env.AGENT_SKILLS_DIR) {
+    return path.resolve(process.env.AGENT_SKILLS_DIR);
   }
-  if (opts.scope === "project") {
-    return path.resolve(process.cwd(), ".claude", "skills");
+  if (opts.scope === "user" || opts.scope === "global") {
+    return path.resolve(os.homedir(), ".agents", "skills");
   }
-  return path.resolve(os.homedir(), ".claude", "skills");
+  // Default: project scope (mirrors `npx skills` default)
+  return path.resolve(process.cwd(), ".agents", "skills");
 }
 
 // ---------------------------------------------------------------------------
@@ -118,8 +129,12 @@ function cmdInstall(opts) {
   console.log(`✓ Installed ${SKILL_NAME} v${version}`);
   console.log(`  Location: ${dest}`);
   console.log("");
+  console.log("Tip: the recommended install path is the runtime-neutral");
+  console.log("     'npx skills add aniketkrs/research-paper' command,");
+  console.log("     which auto-detects all installed agent runtimes.");
+  console.log("");
   console.log("Next steps:");
-  console.log("  1. Restart your Claude Code / agent session.");
+  console.log("  1. Restart your agent session.");
   console.log(`  2. Try:  /research "your topic" --depth quick`);
   console.log(`  3. Read: ${path.join(dest, "SKILL.md")}`);
 }
@@ -159,37 +174,50 @@ function cmdStatus(opts) {
     }
   } else {
     console.log(`Status: not installed`);
-    console.log(`  Run:  npx @aniketkrs/research-paper install`);
+    console.log(`  Recommended install:  npx skills add aniketkrs/research-paper`);
+    console.log(`  Direct install:        npx -y github:aniketkrs/research-paper install`);
   }
 }
 
 function cmdHelp() {
   console.log(`
-@aniketkrs/research-paper — Claude Agent Skill installer
+research-paper — Direct installer (alternative to 'npx skills add')
 
-Usage:
-  npx @aniketkrs/research-paper install   [--target <path>] [--scope user|project]
-  npx @aniketkrs/research-paper uninstall [--target <path>]
-  npx @aniketkrs/research-paper status    [--target <path>]
-  npx @aniketkrs/research-paper --help
+PREFERRED install path (runtime-neutral, auto-detects all agents):
+  npx skills add aniketkrs/research-paper
+
+DIRECT install path (this script):
+  npx -y github:aniketkrs/research-paper install   [--target <path>] [--scope user|project]
+  npx -y github:aniketkrs/research-paper uninstall [--target <path>]
+  npx -y github:aniketkrs/research-paper status    [--target <path>]
+  npx -y github:aniketkrs/research-paper --help
 
 Options:
-  --target <path>   Install destination (default: $CLAUDE_SKILLS_DIR or ~/.claude/skills)
-  --scope user      Install to user scope (default; ~/.claude/skills)
-  --scope project   Install to project scope (./.claude/skills)
+  --target <path>   Install destination (default: $AGENT_SKILLS_DIR or ./.agents/skills/)
+  --scope user      User scope (~/.agents/skills/)
+  --scope project   Project scope (./.agents/skills/, default)
   --help, -h        Show this help
 
 Environment:
-  CLAUDE_SKILLS_DIR Override the default install directory.
+  AGENT_SKILLS_DIR  Override the default install directory.
 
 Examples:
-  npx @aniketkrs/research-paper install
-  npx @aniketkrs/research-paper install --scope project
-  npx @aniketkrs/research-paper install --target ~/.config/opencode/skills/
-  npx @aniketkrs/research-paper uninstall
-  npx @aniketkrs/research-paper status
+  # Project-scope (default; like 'npx skills add' default)
+  npx -y github:aniketkrs/research-paper install
 
-Once installed, in Claude Code / OpenCode:
+  # User-scope (global)
+  npx -y github:aniketkrs/research-paper install --scope user
+
+  # Custom directory
+  npx -y github:aniketkrs/research-paper install --target ./my-agents-folder
+
+  # Status
+  npx -y github:aniketkrs/research-paper status
+
+  # Uninstall
+  npx -y github:aniketkrs/research-paper uninstall
+
+Once installed, in any compatible agent session:
   /research "your topic" --depth standard --style ieee
 
 See:

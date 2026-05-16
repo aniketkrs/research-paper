@@ -1,72 +1,135 @@
-# Publishing — Per-Platform Installation
+# Installation Guide
 
-This skill ships as a standard Anthropic Agent Skill: a folder with
-`SKILL.md`, `manifest.json`, and supporting modules. It works
-**anywhere Agent Skills are supported**.
+This skill is a standard agent skill: a folder with `SKILL.md`,
+`manifest.json`, and supporting modules. It works with **any agent
+runtime that speaks the agent-skills protocol** — no Claude- or
+vendor-specific assumptions.
 
-The fastest install is via npx; manual install is also covered for
-each runtime.
+The recommended installer is the official `npx skills` CLI, which
+auto-detects every agent runtime on your machine and installs the skill
+into the runtime-neutral `.agents/skills/` directory used by all of
+them (50+ supported: Claude Code, OpenCode, Cursor, Cline, Codex, Aider,
+Amp, Antigravity, AiderDesk, Augment, IBM Bob, and more).
 
 ---
 
-## 1. One-line install (npx)
-
-The fastest way (works immediately, no npm account needed):
+## 1. Recommended: `npx skills` (universal)
 
 ```bash
+npx skills add aniketkrs/research-paper
+```
+
+That's it. The installer:
+
+- Clones this repository.
+- Detects every agent runtime on your machine.
+- Installs the skill into `.agents/skills/research-paper/` (project
+  scope by default).
+- Symlinks the skill into runtime-specific locations where needed
+  (e.g., for Claude Code, OpenCode, etc.).
+
+### Verify
+
+```bash
+npx skills list
+npx skills find research-paper
+```
+
+### Pin to a version
+
+```bash
+npx skills add aniketkrs/research-paper#v2.0.1
+```
+
+### Install globally (user scope)
+
+```bash
+npx skills add aniketkrs/research-paper --global
+```
+
+### Install to specific agents only
+
+```bash
+npx skills add aniketkrs/research-paper --agent claude-code
+npx skills add aniketkrs/research-paper --agent cursor
+npx skills add aniketkrs/research-paper --agent '*'         # all detected
+```
+
+### List supported agents on your machine
+
+```bash
+npx skills add aniketkrs/research-paper --list
+```
+
+### Update / upgrade
+
+```bash
+npx skills update research-paper
+```
+
+### Remove
+
+```bash
+npx skills remove research-paper
+```
+
+---
+
+## 2. Alternative: direct npx from GitHub (no `npx skills` required)
+
+If you can't or don't want to use the `npx skills` CLI, this repo also
+ships a direct installer:
+
+```bash
+# Project scope (default)
 npx -y github:aniketkrs/research-paper install
+
+# User scope
+npx -y github:aniketkrs/research-paper install --scope user
+
+# Custom target
+npx -y github:aniketkrs/research-paper install --target ./my-agents/
 ```
 
-If/when published to npm:
-
-```bash
-npx @aniketkrs/research-paper install
-```
-
-Both copy the skill into your active skills directory. Restart your
-session and the skill activates on academic-writing requests.
-
-To pin a version (GitHub):
-
-```bash
-npx -y github:aniketkrs/research-paper#v2.0.0 install
-```
-
-To pin a version (npm):
-
-```bash
-npx @aniketkrs/research-paper@2.0.0 install
-```
-
-To install into a specific runtime's directory:
-
-```bash
-npx -y github:aniketkrs/research-paper install --target ~/.claude/skills/
-npx -y github:aniketkrs/research-paper install --target ~/.config/opencode/skills/
-npx -y github:aniketkrs/research-paper install --scope project    # ./.claude/skills
-```
+Both end up in the runtime-neutral `.agents/skills/` directory. The
+only difference is that the direct installer doesn't auto-detect /
+symlink to per-runtime locations — you'd handle that yourself if your
+runtime requires it.
 
 ---
 
-## 2. Manual install — Claude Code (CLI)
+## 3. Manual install — universal (any agent runtime)
 
-Two scopes:
+```bash
+git clone https://github.com/aniketkrs/research-paper.git
+mkdir -p .agents/skills
+mv research-paper .agents/skills/
+```
 
-| Scope          | Location                                    |
-| -------------- | ------------------------------------------- |
-| User-scope     | `~/.claude/skills/research-paper/`           |
-| Project-scope  | `<project>/.claude/skills/research-paper/`   |
+Most agent runtimes will auto-detect skills in `.agents/skills/`
+(project scope) or `~/.agents/skills/` (user scope).
 
-### Install
+---
 
-**macOS / Linux:**
+## 4. Manual install — Claude Code (one specific runtime)
+
+Claude Code looks in two locations:
+
+| Scope         | Location                                    |
+| ------------- | ------------------------------------------- |
+| User          | `~/.claude/skills/research-paper/`           |
+| Project       | `<project>/.claude/skills/research-paper/`   |
+
+### macOS / Linux
+
 ```bash
 git clone https://github.com/aniketkrs/research-paper.git
 mkdir -p ~/.claude/skills
-mv research-paper ~/.claude/skills/research-paper
+mv research-paper ~/.claude/skills/
 ```
 
-**Windows (PowerShell):**
+### Windows (PowerShell)
+
 ```powershell
 git clone https://github.com/aniketkrs/research-paper.git
 $dest = "$HOME\.claude\skills\research-paper"
@@ -78,18 +141,46 @@ Move-Item -Force .\research-paper $dest
 
 In a Claude Code session:
 
-> "List the skills you have available."
-
-Expected: `research-paper` appears with the description from
-`manifest.json`.
-
 > `/research "Test of the research-paper skill" --depth quick`
 
 Expected: a 2-page paper with citations and at least one figure.
 
 ---
 
-## 3. Manual install — Claude Desktop
+## 5. Manual install — OpenCode
+
+```bash
+# Project scope
+git clone https://github.com/aniketkrs/research-paper.git \
+    .opencode/skills/research-paper
+
+# User scope
+git clone https://github.com/aniketkrs/research-paper.git \
+    ~/.config/opencode/skills/research-paper
+```
+
+---
+
+## 6. Manual install — other runtimes
+
+| Runtime                | Skills directory (typical)                   |
+| ---------------------- | -------------------------------------------- |
+| Cursor agents           | `.cursor/skills/` or `~/.cursor/skills/`      |
+| Cline                   | `.cline/skills/` or `~/.cline/skills/`        |
+| Codex                   | `.codex/skills/` or `~/.codex/skills/`        |
+| Aider                   | `~/.aider/skills/`                            |
+| Amp                     | `~/.amp/skills/`                              |
+| Antigravity              | `~/.antigravity/skills/`                      |
+| AiderDesk                | per-app preferences                            |
+| Augment                  | `~/.augment/skills/`                          |
+| IBM Bob                  | `~/.bob/skills/`                              |
+
+When in doubt, use `npx skills add aniketkrs/research-paper` and it
+will resolve the right location automatically.
+
+---
+
+## 7. Manual install — Claude Desktop
 
 1. Settings → Skills → Add Skill → Import from folder.
 2. Select the `research-paper/` folder (or a zip of it).
@@ -97,7 +188,7 @@ Expected: a 2-page paper with citations and at least one figure.
 
 ---
 
-## 4. Manual install — claude.ai (web)
+## 8. Manual install — claude.ai (web)
 
 1. Zip the directory:
 
@@ -116,7 +207,7 @@ Expected: a 2-page paper with citations and at least one figure.
 
 ---
 
-## 5. Manual install — Anthropic API / SDK (programmatic)
+## 9. Manual install — Anthropic API / SDK (programmatic)
 
 ```python
 import os
@@ -148,38 +239,23 @@ print(response.content[0].text)
 ```
 
 The skill is built for **progressive disclosure**: only `SKILL.md`
-needs to be in the system prompt. The model reads heavier modules
-(workflows, templates, engines) on demand.
+needs to be in the system prompt. The model reads heavier modules on
+demand.
 
 ---
 
-## 6. Manual install — OpenCode
+## 10. Manual install — generic agent runtime
 
-```bash
-mkdir -p ~/.config/opencode/skills
-git clone https://github.com/aniketkrs/research-paper.git \
-    ~/.config/opencode/skills/research-paper
-```
+Most runtimes follow the same SKILL.md convention. Drop the folder
+into the runtime's skills directory, and ensure the runtime exposes
+filesystem read tools.
 
-Or project-scope:
-```bash
-mkdir -p .opencode/skills
-git clone https://github.com/aniketkrs/research-paper.git \
-    .opencode/skills/research-paper
-```
+If your runtime supports a universal `.agents/skills/` lookup (most
+modern ones do), use option 3 above.
 
 ---
 
-## 7. Manual install — generic agent runtime
-
-Most runtimes (Aider, Cline, Cursor agents, custom LangGraph /
-LlamaIndex agents) follow the same SKILL.md convention. Drop the
-folder into the runtime's skills directory, and ensure the runtime
-exposes filesystem read tools.
-
----
-
-## 8. Optional Python toolchain
+## 11. Optional Python toolchain
 
 The skill emits Markdown tables + Mermaid diagrams by default. To
 enable real chart images and statistical validation:
@@ -197,58 +273,52 @@ python toolchains/analyze_data.py --self-test
 ```
 
 If Python is unavailable, the skill detects it and falls back to
-Mermaid / Markdown — never silent failure.
+Mermaid / Markdown — never a silent failure.
 
 ---
 
-## 9. Updating
+## 12. Updating
 
 ```bash
-cd ~/.claude/skills/research-paper
-git pull
-```
-
-Or via npx:
-```bash
-npx @aniketkrs/research-paper@latest install
+npx skills update research-paper                          # via npx skills
+npx -y github:aniketkrs/research-paper install            # direct re-install
+cd <skill-dir>/research-paper && git pull                  # manual
 ```
 
 Bump `manifest.json → version` whenever you make local changes.
 
 ---
 
-## 10. Uninstalling
+## 13. Uninstalling
 
 ```bash
-rm -rf ~/.claude/skills/research-paper
-```
-
-Or via the skills CLI:
-```bash
-npx skills remove research-paper
+npx skills remove research-paper                           # via npx skills
+npx -y github:aniketkrs/research-paper uninstall           # via direct installer
+rm -rf <skill-dir>/research-paper                          # manual
 ```
 
 ---
 
-## 11. Troubleshooting
+## 14. Troubleshooting
 
 | Symptom                              | Likely cause                                | Fix                                                  |
 | ------------------------------------ | ------------------------------------------- | ---------------------------------------------------- |
 | Skill never activates                 | YAML frontmatter malformed                  | Check `SKILL.md` head with a YAML linter             |
 | Slash commands don't trigger          | Command not registered in runtime            | Check `manifest.json → trigger.commands`             |
-| Charts come out as Markdown only      | Python deps missing                          | See §8                                                |
+| Charts come out as Markdown only      | Python deps missing                          | See §11                                                |
 | Wrong citation format                  | Style not specified or mixed                  | Re-run `format_bibliography.py --style <one-style>`  |
-| Output truncated mid-section          | Context pressure                             | Switch to multi-file output (long_context/multi-file-output.md) |
+| Output truncated mid-section          | Context pressure                             | Switch to multi-file output (`long_context/multi-file-output.md`) |
 | Filesystem errors                      | Tool permissions                             | Grant read/write to the working directory            |
 | "I cannot read that file"              | Filesystem tool missing                      | Provide `read_file` to the runtime                   |
 | Skill activates for unrelated requests | Trigger patterns too broad                   | Edit `manifest.json → trigger.patterns`              |
 
 ---
 
-## 12. Security notes
+## 15. Security notes
 
-- Skill does not require network access by default.
-- Python scripts read / write only inside the working directory.
+- The skill does not require network access by default.
+- Python toolchain scripts read / write only inside the working
+  directory.
 - No telemetry, no phone-home.
 - Web search / fetch is **optional** and only used when the runtime
   exposes those tools.
