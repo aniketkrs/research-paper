@@ -1,0 +1,100 @@
+# Topic → cite-key index for the bundled corpus.
+#
+# When the user asks about a topic (rather than a specific paper),
+# this index maps topic keywords to canonical anchor-paper IDs.
+
+topics:
+
+  transformers:
+    canonical_papers:
+      - "arxiv:1706.03762"     # Attention Is All You Need
+      - "arxiv:1810.04805"     # BERT
+    description: "Transformer architecture and key applications."
+
+  attention-mechanisms:
+    canonical_papers:
+      - "arxiv:1706.03762"
+    description: "Self-attention as the core neural building block."
+
+  retrieval-augmented-generation:
+    canonical_papers:
+      - "arxiv:2005.11401"     # RAG (Lewis et al. 2020)
+    description: "Combining LLMs with non-parametric retrieval."
+
+  language-models:
+    canonical_papers:
+      - "arxiv:1810.04805"     # BERT
+      - "arxiv:2005.11401"     # RAG
+      - "arxiv:2203.02155"     # InstructGPT
+    description: "Foundational language-model architectures and training."
+
+  pretraining:
+    canonical_papers:
+      - "arxiv:1810.04805"     # BERT
+      - "arxiv:2002.05709"     # SimCLR
+    description: "Pretraining strategies for vision and language models."
+
+  computer-vision:
+    canonical_papers:
+      - "arxiv:1512.03385"     # ResNet
+      - "arxiv:1409.4842"      # GoogLeNet / Inception
+      - "arxiv:2002.05709"     # SimCLR
+    description: "Foundational vision deep-learning papers."
+
+  residual-learning:
+    canonical_papers:
+      - "arxiv:1512.03385"
+    description: "Residual / skip connections for very deep networks."
+
+  contrastive-learning:
+    canonical_papers:
+      - "arxiv:2002.05709"
+    description: "Self-supervised learning via contrastive objectives."
+
+  optimization:
+    canonical_papers:
+      - "arxiv:1412.6980"
+    description: "Optimization methods for training deep networks."
+
+  rlhf:
+    canonical_papers:
+      - "arxiv:2203.02155"
+    description: "Reinforcement learning from human feedback."
+
+  alignment:
+    canonical_papers:
+      - "arxiv:2203.02155"
+    description: "Aligning language models with human preferences."
+
+  instruction-tuning:
+    canonical_papers:
+      - "arxiv:2203.02155"
+    description: "Fine-tuning LLMs to follow natural-language instructions."
+
+  systematic-review:
+    canonical_papers:
+      - "doi:10.1136/bmj.n71"   # PRISMA 2020
+    description: "Methodology for conducting systematic literature reviews."
+
+  prisma:
+    canonical_papers:
+      - "doi:10.1136/bmj.n71"
+    description: "PRISMA 2020 reporting standards for systematic reviews."
+
+# Aliases — alternate ways to ask for the same topic.
+aliases:
+  rag: "retrieval-augmented-generation"
+  llm: "language-models"
+  llms: "language-models"
+  cnn: "computer-vision"
+  cnns: "computer-vision"
+  resnet: "residual-learning"
+  bert: "language-models"
+  gpt: "language-models"
+  instructgpt: "instruction-tuning"
+  attention: "attention-mechanisms"
+  transformer: "transformers"
+  selfsupervised: "contrastive-learning"
+  ssl: "contrastive-learning"
+  literature-review: "systematic-review"
+  scoping-review: "systematic-review"

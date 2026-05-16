@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json.schemastore.org/anthropic-agent-skill.json",
+  "name": "read-research-paper",
+  "version": "1.0.0",
+  "description": "Renders any research paper (URL / arXiv ID / DOI / PDF / pasted text) into a visually engaging multi-format reading experience — mind maps, method flowcharts, key-finding infographics, comparison tables, related-work timelines, and a plain-English layer alongside the technical content. Caches everything locally; ships a bundled corpus of canonical papers for offline fallback.",
+  "author": "Aniket Kumar (aniketkrs)",
+  "license": "MIT",
+  "homepage": "https://github.com/aniketkrs/research-paper",
+  "skill_type": "rendering",
+  "entrypoint": "SKILL.md",
+
+  "trigger": {
+    "commands": [
+      "/read-research-paper",
+      "/read-paper",
+      "/explain-paper",
+      "/visualize-paper",
+      "/tldr-paper"
+    ],
+    "patterns": [
+      "read this research paper",
+      "read this paper",
+      "explain this paper",
+      "explain this research paper",
+      "explain the paper at",
+      "make this paper visual",
+      "visualize this paper",
+      "visualize this research paper",
+      "I want to understand this paper",
+      "summarize this paper",
+      "summarize this research paper",
+      "tldr this paper",
+      "tl;dr this paper",
+      "what does this paper say",
+      "explain the paper at this URL",
+      "render this paper",
+      "convert this paper to a visual"
+    ],
+    "input_types": [
+      "arxiv-url", "arxiv-id", "doi", "pdf-url",
+      "pdf-path", "journal-url", "pasted-text"
+    ],
+    "context_signals": [
+      "arxiv.org",
+      "doi.org",
+      ".pdf",
+      "research paper",
+      "paper at this url",
+      "paper i found"
+    ]
+  },
+
+  "tags": [
+    "research",
+    "paper-reader",
+    "visual-rendering",
+    "mind-maps",
+    "flowcharts",
+    "infographics",
+    "plain-english",
+    "arxiv",
+    "doi",
+    "pdf",
+    "claude-skill",
+    "agent-skills",
+    "anthropic"
+  ],
+
+  "capabilities": [
+    "paper-fetching",
+    "pdf-extraction",
+    "url-scraping",
+    "structure-parsing",
+    "figure-extraction",
+    "data-extraction",
+    "mind-map-generation",
+    "flowchart-generation",
+    "infographic-generation",
+    "plain-english-translation",
+    "comparison-table-extraction",
+    "related-work-timeline",
+    "local-caching",
+    "bundled-corpus-fallback",
+    "writer-skill-handoff",
+    "discovery-skill-integration"
+  ],
+
+  "supported_inputs": [
+    "arxiv-url",
+    "arxiv-id",
+    "doi",
+    "doi-url",
+    "pdf-url",
+    "pdf-local-path",
+    "journal-landing-url",
+    "pasted-text"
+  ],
+
+  "supported_visuals": [
+    "mind-map",
+    "method-flowchart",
+    "key-findings-infographic",
+    "comparison-table",
+    "related-work-timeline",
+    "author-network",
+    "concept-map",
+    "figure-passthrough"
+  ],
+
+  "tools_required": ["filesystem-read", "filesystem-write"],
+  "tools_optional": [
+    "web-search",
+    "web-fetch",
+    "shell-exec",
+    "python3",
+    "agent-spawn"
+  ],
+
+  "python_dependencies": {
+    "required": [],
+    "recommended": [
+      "requests>=2.31",
+      "feedparser>=6.0",
+      "pyyaml>=6.0",
+      "pypdf>=4.0",
+      "matplotlib>=3.7",
+      "pandas>=2.0"
+    ]
+  },
+
+  "configuration": {
+    "default_depth": "standard",
+    "default_audience": "mixed",
+    "default_visuals": "auto",
+    "include_figures_default": true,
+    "use_cache_default": true,
+    "use_bundled_corpus_default": true,
+    "cache_dir": "~/.agents/skills/read-research-paper/cache",
+    "max_pdf_size_mb": 50,
+    "max_paper_pages": 100,
+    "min_visuals": 4,
+    "max_visuals": 12
+  },
+
+  "files": {
+    "entry": "SKILL.md",
+    "instructions": ["instructions/core.md"],
+    "workflows": [
+      "workflows/ingestion.md",
+      "workflows/visualization.md",
+      "workflows/caching.md"
+    ],
+    "prompts": [
+      "prompts/parse-paper.md",
+      "prompts/extract-findings.md",
+      "prompts/generate-mindmap.md",
+      "prompts/plain-english.md",
+      "prompts/visual-summary.md"
+    ],
+    "templates": [
+      "templates/visual-paper.md",
+      "templates/tldr.md",
+      "templates/infographic.md"
+    ],
+    "sources": [
+      "sources/arxiv.md",
+      "sources/pdf-extraction.md",
+      "sources/paper-parsing.md"
+    ],
+    "schemas": ["schemas/visual-paper.json"],
+    "toolchains": [
+      "toolchains/fetch_paper.py",
+      "toolchains/extract_pdf.py"
+    ],
+    "cache": ["cache/README.md"],
+    "corpus": [
+      "corpus/README.md",
+      "corpus/anchor-papers.yaml",
+      "corpus/topics-index.yaml"
+    ],
+    "examples": ["examples/sample-visual-output.md"]
+  },
+
+  "integrations": {
+    "research_paper_skill": {
+      "handoff_format": "bibliography.yaml",
+      "writer_command": "/research \"<topic>\" --bibliography <path>"
+    },
+    "get_research_paper_skill": {
+      "trigger_via": "--with-related",
+      "purpose": "Expand the rendered paper with discovered related work."
+    }
+  },
+
+  "activation": {
+    "must_not_activate_for": [
+      "find papers on a topic",
+      "write a paper",
+      "format as IEEE",
+      "general factual question",
+      "code-only request"
+    ]
+  }
+}

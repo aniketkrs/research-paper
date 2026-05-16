@@ -1,7 +1,7 @@
 {
   "name": "@aniketkrs/research-paper",
-  "version": "2.1.0",
-  "description": "Enterprise-grade autonomous research paper generation skill for AI coding agents. Install via npx skills add aniketkrs/research-paper. Compatible with 50+ runtimes (Claude Code, OpenCode, Cursor, Cline, Codex, Aider, Amp, etc.).",
+  "version": "2.2.0",
+  "description": "Three complementary agent skills for academic research: research-paper (writes), get-research-paper (finds), read-research-paper (visualizes any paper from URL/arXiv/DOI/PDF). Install via npx skills add aniketkrs/research-paper.",
   "keywords": [
     "claude",
     "claude-skill",

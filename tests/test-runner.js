@@ -28,6 +28,7 @@ const { spawnSync } = require("child_process");
 const REPO_ROOT = path.resolve(__dirname, "..");
 const SKILL = path.join(REPO_ROOT, "skills", "research-paper");
 const SKILL_GET = path.join(REPO_ROOT, "skills", "get-research-paper");
+const SKILL_READ = path.join(REPO_ROOT, "skills", "read-research-paper");
 const VERBOSE = process.argv.includes("--verbose");
 
 let pass = 0;
@@ -68,6 +69,11 @@ function skillFile(rel) {
 function getSkillFile(rel) {
   const p = path.join(SKILL_GET, rel);
   assert(exists(p), `Missing skill file: skills/get-research-paper/${rel}`);
+}
+
+function readSkillFile(rel) {
+  const p = path.join(SKILL_READ, rel);
+  assert(exists(p), `Missing skill file: skills/read-research-paper/${rel}`);
 }
 
 function readJson(absPath) {
@@ -285,6 +291,94 @@ test("arxiv_search.py --self-test", () => {
   }
   assert(/urllib stdlib: True/.test(r.out), "urllib not detected");
   assert(/xml\.etree stdlib: True/.test(r.out), "xml.etree not detected");
+});
+
+console.log("\n• read-research-paper skill structure (skills/read-research-paper/)");
+[
+  "SKILL.md",
+  "manifest.json",
+  "instructions/core.md",
+  "workflows/ingestion.md",
+  "workflows/visualization.md",
+  "workflows/caching.md",
+  "prompts/parse-paper.md",
+  "prompts/extract-findings.md",
+  "prompts/generate-mindmap.md",
+  "prompts/plain-english.md",
+  "prompts/visual-summary.md",
+  "templates/visual-paper.md",
+  "templates/tldr.md",
+  "templates/infographic.md",
+  "sources/arxiv.md",
+  "sources/pdf-extraction.md",
+  "sources/paper-parsing.md",
+  "schemas/visual-paper.json",
+  "toolchains/fetch_paper.py",
+  "toolchains/extract_pdf.py",
+  "cache/README.md",
+  "corpus/README.md",
+  "corpus/anchor-papers.yaml",
+  "corpus/topics-index.yaml",
+  "examples/sample-visual-output.md",
+].forEach((f) => test(`read-research-paper/${f}`, () => readSkillFile(f)));
+
+console.log("\n• read-research-paper SKILL.md frontmatter");
+test("read-research-paper SKILL.md has YAML frontmatter", () => {
+  const text = readText(path.join(SKILL_READ, "SKILL.md"));
+  assert(text.startsWith("---"), "no opening ---");
+  const second = text.indexOf("---", 3);
+  assert(second > 0, "no closing ---");
+  const fm = text.slice(3, second);
+  assert(/name:\s*read-research-paper/.test(fm), "name not set to read-research-paper");
+  assert(/description:/.test(fm), "no description field");
+  assert(/version:/.test(fm), "no version field");
+});
+
+console.log("\n• read-research-paper manifest.json schema");
+test("read-research-paper manifest.json parses", () => readJson(path.join(SKILL_READ, "manifest.json")));
+test("read-research-paper manifest.json has required fields", () => {
+  const m = readJson(path.join(SKILL_READ, "manifest.json"));
+  ["name", "version", "description", "trigger", "capabilities",
+   "supported_inputs", "files"].forEach((k) =>
+    assert(m[k] !== undefined, `manifest missing field: ${k}`));
+  assert(m.name === "read-research-paper", "name mismatch");
+  assert(/^\d+\.\d+\.\d+/.test(m.version), "version is not semver");
+  assert(Array.isArray(m.trigger.commands), "trigger.commands not array");
+  assert(m.trigger.commands.includes("/read-research-paper"),
+    "/read-research-paper command missing");
+  assert(m.trigger.commands.includes("/explain-paper"),
+    "/explain-paper command missing");
+});
+
+console.log("\n• read-research-paper visual-paper schema");
+test("visual-paper schema is valid JSON Schema", () => {
+  const s = readJson(path.join(SKILL_READ, "schemas", "visual-paper.json"));
+  assert(s["$schema"], "missing $schema");
+  assert(s.type === "object", "type must be object");
+  assert(s.required && s.required.length > 0, "no required fields");
+});
+
+console.log("\n• read-research-paper toolchain self-tests (optional)");
+function tryPythonRead(args) {
+  const r = spawnSync("python", args, { cwd: SKILL_READ, encoding: "utf-8" });
+  return { code: r.status, out: r.stdout || "", err: r.stderr || "" };
+}
+test("fetch_paper.py --self-test", () => {
+  const r = tryPythonRead(["toolchains/fetch_paper.py", "--self-test"]);
+  if (r.code !== 0) {
+    if (VERBOSE) console.log(r.err);
+    throw new Error("self-test failed");
+  }
+  assert(/urllib stdlib: True/.test(r.out), "urllib not detected");
+  assert(/detect:.*->\s*\(arxiv/.test(r.out), "input detection broken");
+});
+test("extract_pdf.py --self-test", () => {
+  const r = tryPythonRead(["toolchains/extract_pdf.py", "--self-test"]);
+  if (r.code !== 0) {
+    if (VERBOSE) console.log(r.err);
+    throw new Error("self-test failed");
+  }
+  assert(/re stdlib: True/.test(r.out), "re module not detected");
 });
 
 // ---------------------------------------------------------------------------

@@ -4,6 +4,151 @@ All notable changes to **research-paper** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and the
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.2.0] — 2024-05-12
+
+### Added — third skill: `read-research-paper`
+
+The repo now ships **three complementary skills**:
+
+| Skill | Purpose |
+|---|---|
+| `research-paper` | **Writes** new papers |
+| `get-research-paper` | **Finds** real existing papers on a topic |
+| **`read-research-paper`** (new) | **Renders** ANY paper (URL/arXiv/DOI/PDF) as a visual reading experience |
+
+### `read-research-paper` highlights
+
+- **Slash commands:** `/read-research-paper`, `/read-paper`,
+  `/explain-paper`, `/visualize-paper`, `/tldr-paper`.
+- **Natural-language triggers:** "read this research paper [URL]",
+  "explain this paper [URL]", "make this paper visual [URL]",
+  "summarize this paper [URL]".
+- **Universal input:** arXiv URL, arXiv ID, DOI, DOI URL, PDF URL,
+  local PDF path, journal landing URL, or pasted text.
+- **Multi-layer rendering:**
+  - One-page infographic at the top (mind map + headline numbers)
+  - TL;DR (5–8 sentences)
+  - Plain-English summary (5–10 sentences)
+  - Section-by-section walk-through with plain-English alongside
+    technical content for every section
+  - Method flowchart (Mermaid)
+  - Key-findings infographic (matplotlib when available, else Markdown)
+  - Comparison table to baselines
+  - Related-work timeline
+  - Concept map + author network (in `--visuals max` mode)
+- **Three-tier fallback** so the skill never bluffs:
+  1. Local cache (instant on re-asks)
+  2. Live fetch (arXiv API + Crossref + WebFetch + PDF extraction)
+  3. **Bundled corpus** of canonical anchor papers (offline-safe)
+  4. Model knowledge with `[UNVERIFIED]` flags
+  - Source tier always declared in the output footer.
+- **Local cache:** persists every fetched paper at
+  `~/.agents/skills/read-research-paper/cache/`. Re-asks are instant.
+- **Bundled corpus:** ships with ~10 canonical anchor papers across
+  major topics (Transformers, RAG, BERT, ResNet, Adam, SimCLR, RLHF,
+  PRISMA, etc.). Topic-keyword index maps slugs → papers.
+- **Audience modes:** `academic` / `technical` / `general` / `mixed`
+  — adjusts the plain-English layer's reading level.
+- **Visual modes:** `none` / `minimal` / `auto` (default) / `max`.
+- **Working Python toolchains:**
+  - `fetch_paper.py` — fetches arXiv (API), DOIs (Crossref), PDFs,
+    URLs, pasted text. Uses `feedparser`/`requests`/`pypdf` when
+    available; falls back to stdlib `urllib`/`xml.etree`. **No
+    required dependencies.** Live-tested against arXiv.
+  - `extract_pdf.py` — PDF text + table extraction via `pdfplumber`
+    or `pypdf`. Section-header detection. Figure / table caption
+    regex.
+- **Clean handoffs:**
+  - `--with-related` triggers `get-research-paper` for expanded
+    related work.
+  - `--with-handoff` produces `bibliography.yaml` for `research-paper`.
+
+### `read-research-paper` structure
+
+```
+skills/read-research-paper/
+├── SKILL.md                       # Entry point
+├── manifest.json                  # Metadata + triggers
+├── instructions/core.md            # Operating principles
+├── workflows/
+│   ├── ingestion.md                 # Master pipeline
+│   ├── visualization.md             # Visual decision tree
+│   └── caching.md                   # Cache protocol
+├── prompts/
+│   ├── parse-paper.md               # Structured parsing
+│   ├── extract-findings.md           # Headline-number extraction
+│   ├── generate-mindmap.md           # Mind-map generation
+│   ├── plain-english.md              # Plain-English translation
+│   └── visual-summary.md             # One-page top-of-doc summary
+├── templates/
+│   ├── visual-paper.md              # Headline deliverable format
+│   ├── tldr.md                       # TL;DR section
+│   └── infographic.md                # Standalone one-pager
+├── sources/
+│   ├── arxiv.md                      # arXiv API specifics
+│   ├── pdf-extraction.md             # PDF tooling
+│   └── paper-parsing.md              # Heuristic + LLM parsing
+├── schemas/
+│   └── visual-paper.json             # Output schema
+├── toolchains/
+│   ├── fetch_paper.py                # Multi-source fetcher
+│   └── extract_pdf.py                # PDF extractor
+├── cache/                            # Empty placeholder; populates at runtime
+│   └── README.md
+├── corpus/                           # Bundled fallback corpus
+│   ├── README.md
+│   ├── anchor-papers.yaml
+│   └── topics-index.yaml
+└── examples/
+    └── sample-visual-output.md       # End-to-end example
+```
+
+### Architecture: the "don't bluff" cascade
+
+The skill addresses user feedback to avoid bluffing when sources
+aren't available. Honest design:
+
+- **No internet-wide crawl** — that's not what skills do. We use
+  search APIs (arXiv, Crossref) plus a bundled corpus + local cache.
+- **No shared backend across users** — caches are per-installation.
+  Alice's cache doesn't help Bob.
+- **What we DO ship:** a curated, version-controlled bundled corpus
+  that travels with the skill. Every user gets the same baseline
+  of high-quality anchor papers on common topics, plus a local
+  cache that grows from there.
+
+### Updated — `get-research-paper`
+
+- New integration field in `manifest.json` describing how to chain
+  with `read-research-paper`.
+- No functional changes.
+
+### Updated — `research-paper`
+
+- No functional changes; version-aligned to 2.2.0.
+
+### Updated — tests
+
+- 100+ tests pass. New tests cover `read-research-paper` structure,
+  manifest, schema, and both Python toolchains' self-tests.
+
+### Verified
+
+- Live arXiv API fetch returned real metadata for arxiv:1706.03762
+  ("Attention Is All You Need", Vaswani et al. 2017, all 8 authors).
+- Input detection works across arXiv URLs, bare IDs, DOIs, DOI URLs,
+  PDFs, generic URLs, and pasted text.
+- All three skills detected by `npx skills add aniketkrs/research-paper --list`.
+
+### Versioning
+
+- Repo: 2.1.0 → 2.2.0
+- skills/research-paper: 2.1.0 → 2.2.0 (no functional changes)
+- skills/get-research-paper: 1.0.0 → 1.0.1 (manifest integration field)
+- skills/read-research-paper: 1.0.0 (new)
+
+---
+
 ## [2.1.0] — 2024-05-12
 
 ### Added — second skill: `get-research-paper`

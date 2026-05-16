@@ -1,16 +1,33 @@
 # research-paper
 
-> **Two complementary agent skills for academic research, in one repo.**
+> **Three complementary agent skills for academic research, in one repo.**
 >
 > | Skill | What it does | Activation |
 > |---|---|---|
-> | `research-paper` | **Writes** publication-ready research papers, lit reviews, theses, whitepapers, surveys, policy briefs | `/research`, `/paper`, `/literature-review`, `/whitepaper`, `/thesis`, `/survey`, `/policy` |
-> | `get-research-paper` | **Discovers** real existing papers — searches arXiv, Scholar, PubMed, Semantic Scholar; returns a curated reading list with verified DOIs | `/get-research-paper`, `/find-paper`, `/papers-on`, `/scholar` |
+> | `research-paper` | **WRITES** publication-ready research papers, lit reviews, theses, whitepapers, surveys, policy briefs | `/research`, `/paper`, `/literature-review`, `/whitepaper`, `/thesis`, `/survey`, `/policy` |
+> | `get-research-paper` | **FINDS** real existing papers — searches arXiv, Scholar, PubMed, Semantic Scholar; returns curated reading list with verified DOIs | `/get-research-paper`, `/find-paper`, `/papers-on`, `/scholar` |
+> | `read-research-paper` | **READS** ANY paper (URL / arXiv ID / DOI / PDF) and renders it as a visually engaging multi-format experience with mind maps, flowcharts, infographics, and a plain-English layer | `/read-research-paper`, `/read-paper`, `/explain-paper`, `/visualize-paper`, `/tldr-paper` |
 
-The two skills are designed to work together: `get-research-paper`
-discovers and curates a `bibliography.yaml`, then `research-paper`
-writes a paper using that curated bibliography — no re-searching, no
-fabricated citations.
+The three skills are designed to work together:
+
+```
+  /get-research-paper "topic"        ←  discover papers on a topic
+              │
+              ▼
+   bibliography.yaml + reading-list.md
+              │
+              ▼
+  /read-research-paper <URL>         ←  visualize ANY ONE paper
+              │
+              ▼
+   paper-visual.md + figures/ + cache/
+              │
+              ▼
+  /research "topic" --bibliography ... ←  write a NEW paper grounded
+                                           in real, curated sources
+```
+
+Or use any of them standalone — they don't require each other.
 
 Runtime-neutral. Works with **Claude Code, OpenCode, Cursor, Cline,
 Codex, Aider, Amp, Antigravity, AiderDesk, Augment, IBM Bob,** and 50+
