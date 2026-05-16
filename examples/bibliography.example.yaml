@@ -1,0 +1,156 @@
+# Example bibliography in canonical YAML form.
+# Schema: schemas/citation-schema.json
+# Use as the single source of truth for citations during drafting.
+
+references:
+  - id: smith_2023_llm
+    type: article-journal
+    authors:
+      - {family: Smith, given: Jane A.}
+      - {family: Doe,   given: Alice}
+      - {family: Lee,   given: Kim B.}
+    year: 2023
+    month: 3
+    title: "Large language models in software engineering: A systematic survey"
+    container: "ACM Computing Surveys"
+    volume: 55
+    issue: 4
+    pages: "1-37"
+    doi: "10.1145/3589334"
+    url: "https://doi.org/10.1145/3589334"
+    verification: verified
+    quality_score:
+      authority: 4
+      rigor: 3
+      recency: 3
+      total: 10
+
+  - id: doe_2022_codex
+    type: article-conference
+    authors:
+      - {family: Doe, given: Alice}
+      - {family: Lee, given: Kim}
+    year: 2022
+    title: "Codex evaluation in production"
+    container: "Proceedings of the 35th Conference on Software Engineering (SE '22)"
+    address: "New York, NY, USA"
+    publisher: "ACM"
+    pages: "12-24"
+    doi: "10.1145/9999.9999"
+    verification: unverified-offline
+
+  - id: world_2024_ai
+    type: report
+    authors:
+      - {family: "World Health Organization", is_organization: true}
+    year: 2024
+    title: "AI in global health 2024"
+    publisher: "WHO"
+    address: "Geneva, Switzerland"
+    report_number: "WHO/AI/2024-1"
+    url: "https://who.int/publications/ai-2024"
+    accessed: "2024-05-12"
+    verification: verified
+
+  - id: lewis_2020_rag
+    type: article-conference
+    authors:
+      - {family: Lewis, given: Patrick}
+      - {family: Perez, given: Ethan}
+      - {family: Piktus, given: Aleksandra}
+    year: 2020
+    title: "Retrieval-augmented generation for knowledge-intensive NLP tasks"
+    container: "Advances in Neural Information Processing Systems"
+    volume: 33
+    pages: "9459-9474"
+    arxiv_id: "2005.11401"
+    verification: verified
+
+  - id: vaswani_2017_attention
+    type: article-conference
+    authors:
+      - {family: Vaswani,    given: Ashish}
+      - {family: Shazeer,    given: Noam}
+      - {family: Parmar,     given: Niki}
+      - {family: Uszkoreit,  given: Jakob}
+      - {family: Jones,      given: Llion}
+      - {family: Gomez,      given: Aidan N.}
+      - {family: Kaiser,     given: Lukasz}
+      - {family: Polosukhin, given: Illia}
+    year: 2017
+    title: "Attention is all you need"
+    container: "Advances in Neural Information Processing Systems"
+    volume: 30
+    pages: "5998-6008"
+    arxiv_id: "1706.03762"
+    verification: verified
+    quality_score:
+      authority: 4
+      rigor: 3
+      recency: 3
+      total: 10
+
+  - id: nielsen_1994_heuristics
+    type: chapter
+    authors:
+      - {family: Nielsen, given: Jakob}
+    editors:
+      - {family: Nielsen, given: Jakob}
+      - {family: Mack,    given: Robert L.}
+    year: 1994
+    title: "Heuristic evaluation"
+    container: "Usability Inspection Methods"
+    publisher: "Wiley"
+    address: "New York"
+    pages: "25-62"
+    isbn: "978-0-471-01877-3"
+    verification: verified
+
+  - id: braun_2006_thematic
+    type: article-journal
+    authors:
+      - {family: Braun, given: Virginia}
+      - {family: Clarke, given: Victoria}
+    year: 2006
+    title: "Using thematic analysis in psychology"
+    container: "Qualitative Research in Psychology"
+    volume: 3
+    issue: 2
+    pages: "77-101"
+    doi: "10.1191/1478088706qp063oa"
+    verification: verified
+
+  - id: lincoln_1985_naturalistic
+    type: book
+    authors:
+      - {family: Lincoln, given: Yvonna S.}
+      - {family: Guba,    given: Egon G.}
+    year: 1985
+    title: "Naturalistic Inquiry"
+    publisher: "SAGE Publications"
+    address: "Newbury Park, CA"
+    isbn: "978-0-8039-2431-4"
+    verification: verified
+
+  - id: cohen_1988_power
+    type: book
+    authors:
+      - {family: Cohen, given: Jacob}
+    year: 1988
+    title: "Statistical Power Analysis for the Behavioral Sciences"
+    edition: 2
+    publisher: "Routledge"
+    address: "New York"
+    isbn: "978-0-8058-0283-2"
+    verification: verified
+
+  - id: glaser_1967_grounded
+    type: book
+    authors:
+      - {family: Glaser, given: Barney G.}
+      - {family: Strauss, given: Anselm L.}
+    year: 1967
+    title: "The Discovery of Grounded Theory"
+    publisher: "Aldine"
+    address: "Chicago"
+    verification: verified

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "smith_2023_llm",
+    "type": "article-journal",
+    "authors": [
+      {"family": "Smith", "given": "Jane A."},
+      {"family": "Doe", "given": "Alice"}
+    ],
+    "year": 2023,
+    "title": "Test paper title for the test runner fixture",
+    "container": "Test Journal",
+    "volume": "1",
+    "issue": "2",
+    "pages": "1-10",
+    "doi": "10.1/test",
+    "verification": "verified"
+  },
+  {
+    "id": "doe_2022_other",
+    "type": "article-conference",
+    "authors": [
+      {"family": "Doe", "given": "Alice"},
+      {"family": "Lee", "given": "Kim"}
+    ],
+    "year": 2022,
+    "title": "Another fixture paper",
+    "container": "Proceedings of the Test Conference",
+    "pages": "12-24",
+    "doi": "10.1/test2",
+    "verification": "verified"
+  }
+]
