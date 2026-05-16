@@ -2,13 +2,17 @@
 /**
  * test-runner.js
  * ==============
- * Lightweight test runner that exercises:
- *   - Skill structure (required files exist)
- *   - manifest.json validity
- *   - SKILL.md frontmatter
- *   - Toolchain self-tests (Python optional)
- *   - Citation pipeline against the example bibliography
- *   - Validator against a fixture paper
+ * Lightweight test runner for the research-paper skill.
+ *
+ * Repo layout (skills.sh / npx skills convention):
+ *   .
+ *   ├── README.md, LICENSE, CHANGELOG.md, etc.   ← repo root
+ *   ├── bin/install.js, tests/, docs/            ← repo-level
+ *   └── skills/
+ *       └── research-paper/                       ← actual skill
+ *           ├── SKILL.md, manifest.json
+ *           ├── instructions/, orchestration/, ...
+ *           └── toolchains/*.py
  *
  * Usage:
  *   node tests/test-runner.js
@@ -19,16 +23,16 @@
 
 const fs = require("fs");
 const path = require("path");
-const { execSync, spawnSync } = require("child_process");
+const { spawnSync } = require("child_process");
 
-const ROOT = path.resolve(__dirname, "..");
+const REPO_ROOT = path.resolve(__dirname, "..");
+const SKILL = path.join(REPO_ROOT, "skills", "research-paper");
 const VERBOSE = process.argv.includes("--verbose");
 
 let pass = 0;
 let fail = 0;
 const failures = [];
 
-// ---------------------------------------------------------------------------
 function test(name, fn) {
   try {
     fn();
@@ -46,32 +50,46 @@ function assert(cond, msg) {
   if (!cond) throw new Error(msg);
 }
 
-function fileExists(rel) {
-  const p = path.join(ROOT, rel);
-  assert(fs.existsSync(p), `Missing file: ${rel}`);
+function exists(absPath) {
+  return fs.existsSync(absPath);
 }
 
-function readJson(rel) {
-  return JSON.parse(fs.readFileSync(path.join(ROOT, rel), "utf-8"));
+function repoFile(rel) {
+  const p = path.join(REPO_ROOT, rel);
+  assert(exists(p), `Missing repo file: ${rel}`);
 }
 
-function readText(rel) {
-  return fs.readFileSync(path.join(ROOT, rel), "utf-8");
+function skillFile(rel) {
+  const p = path.join(SKILL, rel);
+  assert(exists(p), `Missing skill file: skills/research-paper/${rel}`);
+}
+
+function readJson(absPath) {
+  return JSON.parse(fs.readFileSync(absPath, "utf-8"));
+}
+
+function readText(absPath) {
+  return fs.readFileSync(absPath, "utf-8");
 }
 
 // ---------------------------------------------------------------------------
 console.log("\n=== research-paper test runner ===\n");
 
-console.log("• Required files");
+console.log("• Repo-level files (root)");
 [
-  "SKILL.md",
-  "manifest.json",
   "README.md",
   "INSTALLATION.md",
   "CHANGELOG.md",
   "LICENSE",
   "package.json",
   "bin/install.js",
+  ".gitignore",
+].forEach((f) => test(f, () => repoFile(f)));
+
+console.log("\n• Skill structure (skills/research-paper/)");
+[
+  "SKILL.md",
+  "manifest.json",
   "instructions/core.md",
   "instructions/activation.md",
   "instructions/multi-agent.md",
@@ -109,11 +127,11 @@ console.log("• Required files");
   "toolchains/statistical_validation.py",
   "examples/sample-paper-arxiv.md",
   "examples/bibliography.example.yaml",
-].forEach((f) => test(f, () => fileExists(f)));
+].forEach((f) => test(f, () => skillFile(f)));
 
 console.log("\n• SKILL.md frontmatter");
 test("SKILL.md has YAML frontmatter", () => {
-  const text = readText("SKILL.md");
+  const text = readText(path.join(SKILL, "SKILL.md"));
   assert(text.startsWith("---"), "no opening ---");
   const second = text.indexOf("---", 3);
   assert(second > 0, "no closing ---");
@@ -125,9 +143,9 @@ test("SKILL.md has YAML frontmatter", () => {
 });
 
 console.log("\n• manifest.json schema");
-test("manifest.json parses", () => readJson("manifest.json"));
+test("manifest.json parses", () => readJson(path.join(SKILL, "manifest.json")));
 test("manifest.json has required fields", () => {
-  const m = readJson("manifest.json");
+  const m = readJson(path.join(SKILL, "manifest.json"));
   ["name", "version", "description", "trigger", "capabilities",
    "supported_formats", "supported_citation_styles", "files",
    "quality_gates"].forEach((k) =>
@@ -140,7 +158,7 @@ test("manifest.json has required fields", () => {
 
 console.log("\n• Citation schema validity");
 test("schemas/citation-schema.json is valid JSON Schema", () => {
-  const s = readJson("schemas/citation-schema.json");
+  const s = readJson(path.join(SKILL, "schemas", "citation-schema.json"));
   assert(s["$schema"], "missing $schema");
   assert(s.type === "object", "type must be object");
   assert(s.required && s.required.length > 0, "no required fields");
@@ -148,7 +166,7 @@ test("schemas/citation-schema.json is valid JSON Schema", () => {
 
 console.log("\n• Python toolchain self-tests (optional)");
 function tryPython(args) {
-  const r = spawnSync("python", args, { cwd: ROOT, encoding: "utf-8" });
+  const r = spawnSync("python", args, { cwd: SKILL, encoding: "utf-8" });
   return { code: r.status, out: r.stdout || "", err: r.stderr || "" };
 }
 test("python interpreter present", () => {
@@ -169,7 +187,7 @@ test("analyze_data.py --self-test", () => {
 
 console.log("\n• Citation pipeline smoke test");
 test("format_bibliography.py runs against fixture", () => {
-  const fix = path.join(ROOT, "tests", "fixtures");
+  const fix = path.join(REPO_ROOT, "tests", "fixtures");
   const r = tryPython([
     "toolchains/format_bibliography.py",
     "--bib", path.join(fix, "small-bibliography.json"),

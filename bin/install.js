@@ -35,7 +35,9 @@ const path = require("path");
 const os = require("os");
 
 const SKILL_NAME = "research-paper";
-const SKILL_ROOT = path.resolve(__dirname, "..");
+// The actual skill content lives in <repo>/skills/<SKILL_NAME>/
+// (the skills.sh / npx skills convention).
+const SKILL_ROOT = path.resolve(__dirname, "..", "skills", SKILL_NAME);
 
 // ---------------------------------------------------------------------------
 // Argument parsing

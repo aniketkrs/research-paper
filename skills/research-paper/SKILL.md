@@ -2,7 +2,7 @@
 name: research-paper
 description: Enterprise-grade autonomous research paper generation skill for AI coding agents — full papers, literature reviews, theses, whitepapers, surveys, policy briefs — with rigorous methodology, statistical validation, multi-style citations (Harvard / APA / IEEE / MLA / Chicago / Nature / arXiv-numeric), and rich visualizations. Activates on slash commands (`/research`, `/paper`, `/literature-review`, `/whitepaper`, `/thesis`, `/survey`, `/policy`) and on natural-language academic-writing requests. Runtime-neutral — works with Claude Code, OpenCode, Cursor, Cline, Codex, Aider, Amp, Antigravity, and 50+ agents via the `npx skills` installer.
 license: MIT
-version: 2.0.1
+version: 2.0.2
 ---
 
 # Research Paper

@@ -4,6 +4,56 @@ All notable changes to **research-paper** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and the
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.0.2] — 2024-05-12
+
+### Restructured for skills.sh registry indexing
+
+User feedback pointed out that public skill registries (skills.sh) index
+skills from the `<repo>/skills/<name>/` convention used by multi-skill
+collections. After cross-checking the live `npx skills find` output:
+
+- Repos like `vercel-labs/agent-skills`, `firecrawl/firecrawl-workflows`,
+  `seabbs/skills`, etc. are all indexed because they use this layout.
+- My v2.0.0 / v2.0.1 layout (skill at root) worked for direct
+  `npx skills add aniketkrs/research-paper` but was NOT indexed by
+  `npx skills find`.
+
+This release migrates to the registry-indexable layout:
+
+```
+research-paper/                  ← repo root
+├── README.md, LICENSE, CHANGELOG.md, INSTALLATION.md, package.json
+├── bin/, tests/, docs/          ← repo-level
+└── skills/
+    └── research-paper/           ← actual skill content
+        ├── SKILL.md, manifest.json
+        ├── instructions/, orchestration/, workflows/, prompts/
+        ├── citation_engine/, visualization_engine/, methodology_engine/
+        ├── templates/, validators/, schemas/, rubrics/
+        ├── quality_control/, long_context/, memory/
+        ├── academic_formats/, style_guides/, review_pipeline/
+        ├── toolchains/, assets/, publishing/
+        ├── examples/, datasets/
+```
+
+### Backward compatibility
+
+- `npx skills add aniketkrs/research-paper` continues to work; the tool
+  detects the new layout and installs the skill identically.
+- The direct installer (`bin/install.js`) now reads from
+  `<repo>/skills/research-paper/` and installs into
+  `.agents/skills/research-paper/` (unchanged target).
+- `npm`-based install via `npx -y github:aniketkrs/research-paper install`
+  continues to work.
+
+### Test suite
+
+- Updated to verify the new dual-level structure (repo-level files at
+  root, skill content under `skills/research-paper/`).
+- 54/54 tests pass.
+
+---
+
 ## [2.0.1] — 2024-05-12
 
 ### Changed (de-vendor-locking)
