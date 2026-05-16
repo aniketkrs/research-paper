@@ -11,21 +11,28 @@ each runtime.
 
 ## 1. One-line install (npx)
 
+The fastest way (works immediately, no npm account needed):
+
 ```bash
-npx @aniketkrs/research-paper install
+npx -y github:aniketkrs/research-paper install
 ```
 
-…or, with the Anthropic-style skills CLI (if available in your
-environment):
+If/when published to npm:
 
 ```bash
-npx skills add aniketkrs/research-paper
+npx @aniketkrs/research-paper install
 ```
 
 Both copy the skill into your active skills directory. Restart your
 session and the skill activates on academic-writing requests.
 
-To pin a version:
+To pin a version (GitHub):
+
+```bash
+npx -y github:aniketkrs/research-paper#v2.0.0 install
+```
+
+To pin a version (npm):
 
 ```bash
 npx @aniketkrs/research-paper@2.0.0 install
@@ -34,9 +41,9 @@ npx @aniketkrs/research-paper@2.0.0 install
 To install into a specific runtime's directory:
 
 ```bash
-npx @aniketkrs/research-paper install --target ~/.claude/skills/
-npx @aniketkrs/research-paper install --target ~/.config/opencode/skills/
-npx @aniketkrs/research-paper install --target .claude/skills/      # project-scope
+npx -y github:aniketkrs/research-paper install --target ~/.claude/skills/
+npx -y github:aniketkrs/research-paper install --target ~/.config/opencode/skills/
+npx -y github:aniketkrs/research-paper install --scope project    # ./.claude/skills
 ```
 
 ---

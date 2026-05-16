@@ -16,10 +16,10 @@ quality gates, and an installable npm package.
 
 ## Quick install
 
-### One-liner
+### One-liner (works today, no npm account required)
 
 ```bash
-npx @aniketkrs/research-paper install
+npx -y github:aniketkrs/research-paper install
 ```
 
 This drops the skill into your active skills directory
@@ -27,16 +27,22 @@ This drops the skill into your active skills directory
 OpenCode, etc.). Restart your session and the skill activates on
 academic-writing requests.
 
+### From npm (when published)
+
+```bash
+npx @aniketkrs/research-paper install
+```
+
 ### Pin a version
 
 ```bash
-npx @aniketkrs/research-paper@2.0.0 install
+npx -y github:aniketkrs/research-paper#v2.0.0 install
 ```
 
 ### Project-scope install
 
 ```bash
-npx @aniketkrs/research-paper install --scope project
+npx -y github:aniketkrs/research-paper install --scope project
 ```
 
 ### Manual install
