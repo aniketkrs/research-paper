@@ -1,0 +1,81 @@
+{
+  "name": "@aniketkrs/research-paper",
+  "version": "2.0.0",
+  "description": "Enterprise-grade Claude Agent Skill for autonomous academic research paper generation. Install with: npx @aniketkrs/research-paper install",
+  "keywords": [
+    "claude",
+    "claude-skill",
+    "agent-skills",
+    "anthropic",
+    "research-paper",
+    "academic-writing",
+    "literature-review",
+    "citations",
+    "ieee",
+    "arxiv",
+    "harvard",
+    "apa",
+    "mla",
+    "chicago",
+    "nature",
+    "thesis",
+    "whitepaper",
+    "survey",
+    "policy",
+    "claude-code",
+    "opencode"
+  ],
+  "license": "MIT",
+  "author": "Aniket Kumar (https://github.com/aniketkrs)",
+  "homepage": "https://github.com/aniketkrs/research-paper",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aniketkrs/research-paper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aniketkrs/research-paper/issues"
+  },
+  "bin": {
+    "research-paper": "./bin/install.js"
+  },
+  "scripts": {
+    "install-skill": "node ./bin/install.js install",
+    "test": "node ./tests/test-runner.js"
+  },
+  "files": [
+    "SKILL.md",
+    "manifest.json",
+    "README.md",
+    "INSTALLATION.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "instructions/",
+    "orchestration/",
+    "workflows/",
+    "prompts/",
+    "validators/",
+    "templates/",
+    "citation_engine/",
+    "visualization_engine/",
+    "methodology_engine/",
+    "schemas/",
+    "examples/",
+    "assets/",
+    "tests/",
+    "review_pipeline/",
+    "quality_control/",
+    "long_context/",
+    "memory/",
+    "datasets/",
+    "academic_formats/",
+    "toolchains/",
+    "publishing/",
+    "docs/",
+    "rubrics/",
+    "style_guides/",
+    "bin/"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

@@ -1,0 +1,79 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.iml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+.venv/
+venv/
+env/
+
+# Node / npm
+node_modules/
+npm-debug.log*
+.npm
+.npmrc
+package-lock.json
+
+# Local working artifacts (not shipped)
+paper-out/
+paper-spec.md
+outline.md
+sections/
+analysis/
+figures/
+tables/
+validation/
+review/
+*.draft.md
+*.cited.md
+*.final.md
+session-state.yaml
+Known-gaps.md
+index.md
+!examples/sample-data-analysis.md
+!examples/bibliography.example.yaml
+
+# Tests artifacts
+tests/fixtures/*.tmp.*
+tests/golden-outputs/
+
+# Build / packaging
+*.zip
+*.tar.gz
+*.tgz
+
+# Logs
+*.log

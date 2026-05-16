@@ -1,0 +1,325 @@
+{
+  "$schema": "https://json.schemastore.org/anthropic-agent-skill.json",
+  "name": "research-paper",
+  "version": "2.0.0",
+  "description": "Enterprise-grade autonomous research paper generation system. Produces publication-ready academic papers, literature reviews, theses, whitepapers, surveys, and policy briefs with rigorous methodology, statistical validation, multi-style citations, and rich visualizations. Multi-agent ready, slash-command activated.",
+  "author": "Aniket Kumar (aniketkrs)",
+  "license": "MIT",
+  "homepage": "https://github.com/aniketkrs/research-paper",
+  "skill_type": "generative",
+  "entrypoint": "SKILL.md",
+
+  "trigger": {
+    "commands": [
+      "/research",
+      "/paper",
+      "/literature-review",
+      "/whitepaper",
+      "/thesis",
+      "/survey",
+      "/policy"
+    ],
+    "patterns": [
+      "write a research paper",
+      "generate a paper on",
+      "create a research report",
+      "academic paper about",
+      "scientific paper on",
+      "technical paper on",
+      "literature review on",
+      "systematic review on",
+      "scoping review on",
+      "meta-analysis of",
+      "write a whitepaper",
+      "thesis on",
+      "thesis chapter on",
+      "dissertation chapter on",
+      "survey paper on",
+      "state-of-the-art review",
+      "policy paper on",
+      "policy brief on",
+      "format as IEEE",
+      "format as ACM",
+      "format as arXiv",
+      "format as Nature",
+      "format as Harvard",
+      "add citations",
+      "bibliography",
+      "peer review this draft",
+      "validate the methodology",
+      "analyze .* and write"
+    ],
+    "file_types": [".csv", ".json", ".xlsx", ".bib", ".tex", ".parquet"],
+    "context_signals": [
+      "research", "paper", "academic", "citation", "methodology",
+      "literature review", "hypothesis", "findings", "abstract",
+      "manuscript", "preprint", "thesis", "dissertation"
+    ]
+  },
+
+  "tags": [
+    "research", "academic", "writing", "literature-review", "citations",
+    "data-analysis", "visualization", "ieee", "acm", "arxiv", "nature",
+    "harvard", "apa", "mla", "chicago", "thesis", "whitepaper", "survey",
+    "policy", "claude-skill", "agent-skills", "anthropic"
+  ],
+
+  "capabilities": [
+    "research-planning",
+    "literature-review",
+    "methodology-design",
+    "data-analysis",
+    "statistical-validation",
+    "chart-generation",
+    "diagram-generation",
+    "citation-management",
+    "bibliography-formatting",
+    "academic-writing",
+    "peer-review-simulation",
+    "publication-checklist",
+    "multi-agent-orchestration",
+    "long-context-handling",
+    "multi-format-output"
+  ],
+
+  "supported_formats": [
+    "arxiv", "ieee", "acm", "nature", "harvard",
+    "literature-review", "thesis-chapter", "whitepaper",
+    "survey-paper", "policy-paper"
+  ],
+
+  "supported_paper_types": [
+    "research_paper",
+    "literature_review",
+    "systematic_review",
+    "scoping_review",
+    "meta_analysis",
+    "technical_whitepaper",
+    "survey_paper",
+    "thesis_chapter",
+    "policy_paper",
+    "case_study",
+    "conference_paper"
+  ],
+
+  "supported_citation_styles": [
+    "harvard", "apa", "ieee", "mla",
+    "chicago-author-date", "chicago-notes",
+    "nature", "arxiv-numeric"
+  ],
+
+  "output_formats": ["markdown", "latex", "pdf-ready-pandoc", "html"],
+
+  "tools_required": ["filesystem-read", "filesystem-write"],
+  "tools_optional": [
+    "shell-exec",
+    "python3",
+    "web-search",
+    "web-fetch",
+    "agent-spawn"
+  ],
+
+  "python_dependencies": {
+    "required": [],
+    "recommended": [
+      "pandas>=2.0",
+      "numpy>=1.24",
+      "scipy>=1.11",
+      "statsmodels>=0.14",
+      "matplotlib>=3.7",
+      "seaborn>=0.13",
+      "plotly>=5.17",
+      "scikit-learn>=1.3",
+      "pyyaml>=6.0"
+    ]
+  },
+
+  "configuration": {
+    "default_citation_style": "harvard",
+    "default_output_format": "markdown",
+    "default_depth": "standard",
+    "enable_visualizations": true,
+    "enable_statistical_validation": true,
+    "enable_simple_explanations": true,
+    "enable_review_pipeline": true,
+    "enable_known_gaps_block": true,
+    "min_sources": 8,
+    "max_sources": 200,
+    "min_word_count": 1500,
+    "min_figures_or_tables": 1,
+    "confidence_threshold": 0.7,
+    "auto_generate_charts": true
+  },
+
+  "memory_strategy": {
+    "persist_paper_spec": true,
+    "persist_outline": true,
+    "persist_bibliography": true,
+    "persist_methodology": true,
+    "persist_findings": true,
+    "persist_sections": true,
+    "cache_sources": true,
+    "max_context_usage_pct": 80,
+    "long_context_threshold_words": 10000
+  },
+
+  "quality_gates": {
+    "minimum_word_count": 1500,
+    "minimum_references": 8,
+    "minimum_figures_or_tables": 1,
+    "academic_quality_min": 4.0,
+    "must_include_sections": [
+      "abstract",
+      "introduction",
+      "methodology",
+      "results",
+      "discussion",
+      "limitations",
+      "conclusion",
+      "references"
+    ],
+    "must_include_blocks": [
+      "plain_english_summary",
+      "reproducibility_statement",
+      "future_work"
+    ]
+  },
+
+  "files": {
+    "entry": "SKILL.md",
+    "instructions": [
+      "instructions/core.md",
+      "instructions/activation.md",
+      "instructions/multi-agent.md",
+      "instructions/voice-and-tone.md"
+    ],
+    "orchestration": [
+      "orchestration/pipeline.md",
+      "orchestration/agents.md",
+      "orchestration/routing.md",
+      "orchestration/failure-handling.md"
+    ],
+    "workflows": [
+      "workflows/full-paper.md",
+      "workflows/literature-review.md",
+      "workflows/literature-review-guide.md",
+      "workflows/data-analysis-pipeline.md",
+      "workflows/data-analysis-workflow.md",
+      "workflows/data-pipeline-spec.md",
+      "workflows/visual-generation-pipeline.md",
+      "workflows/visual-planning.md",
+      "workflows/citation-pipeline.md",
+      "workflows/validation-pipeline.md"
+    ],
+    "engines": {
+      "citation_engine": [
+        "citation_engine/citation-styles.md",
+        "citation_engine/bibliography-generation.md",
+        "citation_engine/deduplication.md",
+        "citation_engine/credibility-scoring.md",
+        "citation_engine/source-evaluation.md",
+        "citation_engine/styles/harvard.md",
+        "citation_engine/styles/apa.md",
+        "citation_engine/styles/ieee.md",
+        "citation_engine/styles/mla-chicago.md"
+      ],
+      "visualization_engine": [
+        "visualization_engine/decision-engine.md",
+        "visualization_engine/chart-templates.md",
+        "visualization_engine/caption-generator.md",
+        "visualization_engine/visualization-guide.md"
+      ],
+      "methodology_engine": [
+        "methodology_engine/frameworks.md",
+        "methodology_engine/statistical-tests.md",
+        "methodology_engine/sampling.md",
+        "methodology_engine/methodology-guide.md",
+        "methodology_engine/statistical-methods.md"
+      ]
+    },
+    "validators": [
+      "validators/citation-validator.md",
+      "validators/methodology-validator.md",
+      "validators/quality-rubric.md"
+    ],
+    "review_pipeline": [
+      "review_pipeline/peer-review.md",
+      "review_pipeline/three-personas.md"
+    ],
+    "rubrics": [
+      "rubrics/academic-quality.md",
+      "rubrics/methodology-rigor.md",
+      "rubrics/citation-quality.md",
+      "rubrics/visual-quality.md",
+      "rubrics/publication-readiness.md"
+    ],
+    "quality_control": [
+      "quality_control/publication-checklist.md"
+    ],
+    "long_context": [
+      "long_context/strategy.md",
+      "long_context/chunking.md",
+      "long_context/multi-file-output.md"
+    ],
+    "memory": [
+      "memory/citation-memory.md",
+      "memory/methodology-memory.md",
+      "memory/session-state.md"
+    ],
+    "academic_formats": [
+      "academic_formats/overview.md",
+      "academic_formats/arxiv.md",
+      "academic_formats/ieee.md",
+      "academic_formats/acm.md",
+      "academic_formats/nature.md",
+      "academic_formats/harvard.md"
+    ],
+    "templates": [
+      "templates/arxiv-paper.md",
+      "templates/ieee-paper.md",
+      "templates/acm-paper.md",
+      "templates/nature-paper.md",
+      "templates/harvard-paper.md",
+      "templates/literature-review.md",
+      "templates/thesis-chapter.md",
+      "templates/whitepaper.md",
+      "templates/survey-paper.md",
+      "templates/policy-paper.md"
+    ],
+    "schemas": [
+      "schemas/paper-schema.json",
+      "schemas/citation-schema.json",
+      "schemas/figure-schema.json",
+      "schemas/table-schema.json",
+      "schemas/dataset-schema.json",
+      "schemas/citation-database-schema.json"
+    ],
+    "toolchains": [
+      "toolchains/generate_paper.py",
+      "toolchains/format_bibliography.py",
+      "toolchains/validate_citations.py",
+      "toolchains/extract_references.py",
+      "toolchains/analyze_data.py",
+      "toolchains/generate_charts.py",
+      "toolchains/statistical_validation.py"
+    ],
+    "examples": [
+      "examples/sample-paper-arxiv.md",
+      "examples/sample-literature-review.md",
+      "examples/sample-data-analysis.md",
+      "examples/sample-paper-excerpt.md",
+      "examples/bibliography.example.yaml"
+    ]
+  },
+
+  "activation": {
+    "must_not_activate_for": [
+      "blog post",
+      "marketing copy",
+      "tweet",
+      "casual chat",
+      "single paragraph",
+      "code-only request"
+    ]
+  }
+}
