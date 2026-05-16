@@ -1,0 +1,78 @@
+% latex-preamble.tex
+% Common preamble for converting research-paper-writer Markdown output
+% to LaTeX via Pandoc. Use:
+%
+%   pandoc paper-final.md \
+%       --include-in-header=assets/latex-templates/latex-preamble.tex \
+%       --citeproc --bibliography=references.bib \
+%       --csl=ieee.csl \
+%       -o paper-final.pdf
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{positioning, shapes, arrows.meta}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+\usepackage{caption}
+\captionsetup{font=small, labelfont=bf, format=plain}
+
+% Color palette (Okabe-Ito, colorblind-safe)
+\definecolor{oiOrange}{HTML}{E69F00}
+\definecolor{oiSkyBlue}{HTML}{56B4E9}
+\definecolor{oiBluishGreen}{HTML}{009E73}
+\definecolor{oiYellow}{HTML}{F0E442}
+\definecolor{oiBlue}{HTML}{0072B2}
+\definecolor{oiVermilion}{HTML}{D55E00}
+\definecolor{oiReddishPurple}{HTML}{CC79A7}
+\definecolor{oiBlack}{HTML}{000000}
+
+% Listings (code blocks)
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{oiBlue}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{oiBluishGreen},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  frame=single,
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=2,
+}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+% Useful macros
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\given}{\,|\,}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\inner}[2]{\left\langle#1, #2\right\rangle}
+
+% Compact lists
+\usepackage{enumitem}
+\setlist{nosep}
+
+% Better figure placement
+\usepackage{float}
+\usepackage{placeins}

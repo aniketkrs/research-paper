@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-paper-writer/schemas/figure-schema.json",
+  "title": "Figure",
+  "type": "object",
+  "required": ["id", "section", "type", "caption"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^figure-\\d+$" },
+    "number": { "type": "integer", "minimum": 1 },
+    "section": { "type": "string" },
+    "type": {
+      "type": "string",
+      "enum": [
+        "bar", "grouped-bar", "stacked-bar", "horizontal-bar", "lollipop",
+        "line", "multi-line", "stacked-area", "streamgraph",
+        "scatter", "hex-bin", "density-2d",
+        "histogram", "kde", "violin", "box", "strip", "jitter",
+        "heatmap", "correlation-heatmap",
+        "sankey", "alluvial",
+        "flowchart", "architecture-diagram", "block-diagram", "prisma-flow",
+        "mindmap", "tree", "graph",
+        "treemap", "sunburst",
+        "choropleth", "point-map", "flow-map",
+        "timeline", "gantt",
+        "forest-plot", "funnel-plot", "volcano-plot",
+        "radar", "parallel-coordinates",
+        "comparison-table", "image", "screenshot"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "description": "Path to source CSV, or 'mermaid', 'image', 'described-in-text'."
+    },
+    "caption": { "type": "string", "minLength": 20 },
+    "alt_text": { "type": "string" },
+    "render_method": {
+      "type": "string",
+      "enum": ["python", "mermaid", "markdown", "latex", "image", "ascii"]
+    },
+    "renderer_args": { "type": "object" },
+    "files": {
+      "type": "object",
+      "properties": {
+        "png": { "type": "string" },
+        "svg": { "type": "string" },
+        "pdf": { "type": "string" },
+        "mmd": { "type": "string" },
+        "csv": { "type": "string" }
+      }
+    },
+    "in_text_references": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Sentences in the body that reference this figure."
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": { "type": "string", "enum": ["high", "medium", "low"] },
+          "description": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-paper-writer/schemas/dataset-schema.json",
+  "title": "Dataset",
+  "type": "object",
+  "required": ["id", "name", "n_rows"],
+  "properties": {
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "source": { "type": "string", "description": "URL or citation key." },
+    "citation_key": { "type": "string" },
+    "license": { "type": "string" },
+    "n_rows": { "type": "integer", "minimum": 1 },
+    "n_columns": { "type": "integer", "minimum": 1 },
+    "splits": {
+      "type": "object",
+      "properties": {
+        "train": { "type": "integer" },
+        "val": { "type": "integer" },
+        "test": { "type": "integer" }
+      }
+    },
+    "synthetic": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, the dataset is illustrative-synthetic and the paper must say so explicitly."
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "dtype"],
+        "properties": {
+          "name": { "type": "string" },
+          "dtype": {
+            "type": "string",
+            "enum": ["numeric", "integer", "float", "categorical", "ordinal", "boolean", "datetime", "text", "id"]
+          },
+          "unit": { "type": "string" },
+          "description": { "type": "string" },
+          "n_missing": { "type": "integer" },
+          "n_unique": { "type": "integer" },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "mean": { "type": "number" },
+              "median": { "type": "number" },
+              "sd": { "type": "number" },
+              "min": { "type": "number" },
+              "max": { "type": "number" },
+              "skew": { "type": "number" },
+              "kurtosis": { "type": "number" },
+              "top_categories": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": { "type": "string" },
+                    "count": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "preprocessing": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step": { "type": "string" },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+    "ethics": {
+      "type": "object",
+      "properties": {
+        "contains_pii": { "type": "boolean" },
+        "anonymized": { "type": "boolean" },
+        "irb_approval": { "type": "string" }
+      }
+    },
+    "credibility": {
+      "type": "object",
+      "properties": {
+        "score": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-paper-writer/schemas/paper-schema.json",
+  "title": "Research Paper",
+  "description": "Canonical schema for a paper produced by the research-paper-writer skill.",
+  "type": "object",
+  "required": ["meta", "abstract", "sections", "bibliography"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["title", "format", "citation_style"],
+      "properties": {
+        "title": { "type": "string", "minLength": 5, "maxLength": 200 },
+        "subtitle": { "type": "string" },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["family", "given"],
+            "properties": {
+              "family": { "type": "string" },
+              "given": { "type": "string" },
+              "affiliation": { "type": "string" },
+              "email": { "type": "string", "format": "email" },
+              "orcid": { "type": "string", "pattern": "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$" },
+              "corresponding": { "type": "boolean" }
+            }
+          }
+        },
+        "format": {
+          "type": "string",
+          "enum": ["arxiv", "ieee", "acm", "nature", "harvard", "literature-review", "thesis-chapter", "whitepaper", "survey-paper", "policy-paper"]
+        },
+        "citation_style": {
+          "type": "string",
+          "enum": ["harvard", "apa", "ieee", "mla", "chicago-author-date", "chicago-notes", "nature", "arxiv-numeric"]
+        },
+        "venue": { "type": "string" },
+        "version": { "type": "string", "default": "v1" },
+        "date": { "type": "string", "format": "date" },
+        "language": { "type": "string", "default": "en-US" },
+        "keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 3,
+          "maxItems": 10
+        },
+        "license": { "type": "string" },
+        "anonymized": { "type": "boolean", "default": false }
+      }
+    },
+
+    "abstract": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": { "type": "string", "minLength": 100, "maxLength": 3000 },
+        "structured": {
+          "type": "object",
+          "properties": {
+            "background": { "type": "string" },
+            "objectives": { "type": "string" },
+            "methods": { "type": "string" },
+            "results": { "type": "string" },
+            "conclusions": { "type": "string" }
+          }
+        },
+        "word_count": { "type": "integer", "minimum": 50, "maximum": 500 }
+      }
+    },
+
+    "plain_english_summary": {
+      "type": "object",
+      "properties": {
+        "text": { "type": "string", "minLength": 200, "maxLength": 2000 },
+        "flesch_kincaid_grade": { "type": "number", "maximum": 12 },
+        "sentence_count": { "type": "integer", "minimum": 5, "maximum": 12 }
+      }
+    },
+
+    "sections": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "level", "content"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "title": { "type": "string" },
+          "level": { "type": "integer", "minimum": 1, "maximum": 4 },
+          "content": { "type": "string" },
+          "subsections": { "$ref": "#/properties/sections" },
+          "figures": {
+            "type": "array",
+            "items": { "$ref": "figure-schema.json" }
+          },
+          "tables": {
+            "type": "array",
+            "items": { "$ref": "table-schema.json" }
+          },
+          "citations_used": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "word_count": { "type": "integer" }
+        }
+      }
+    },
+
+    "figures": {
+      "type": "array",
+      "items": { "$ref": "figure-schema.json" }
+    },
+
+    "tables": {
+      "type": "array",
+      "items": { "$ref": "table-schema.json" }
+    },
+
+    "bibliography": {
+      "type": "array",
+      "items": { "$ref": "citation-schema.json" }
+    },
+
+    "datasets": {
+      "type": "array",
+      "items": { "$ref": "dataset-schema.json" }
+    },
+
+    "reproducibility": {
+      "type": "object",
+      "properties": {
+        "code_url": { "type": "string", "format": "uri" },
+        "code_commit": { "type": "string" },
+        "data_url": { "type": "string" },
+        "environment_file": { "type": "string" },
+        "hardware": { "type": "string" },
+        "seeds": {
+          "type": "array",
+          "items": { "type": "integer" }
+        },
+        "runtime_estimate": { "type": "string" },
+        "hyperparameters": { "type": "object" }
+      }
+    },
+
+    "ethics": {
+      "type": "object",
+      "properties": {
+        "irb_approval": { "type": "string" },
+        "consent_procedure": { "type": "string" },
+        "data_anonymization": { "type": "string" },
+        "competing_interests": { "type": "string" },
+        "funding": { "type": "string" }
+      }
+    },
+
+    "known_gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["severity", "description"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["citation-needed", "unverified", "incomplete-metadata", "reproducibility-gap", "underpowered", "overclaim", "missing-figure", "other"]
+          },
+          "severity": { "type": "string", "enum": ["high", "medium", "low"] },
+          "section": { "type": "string" },
+          "description": { "type": "string" },
+          "recommended_fix": { "type": "string" }
+        }
+      }
+    },
+
+    "quality_scores": {
+      "type": "object",
+      "properties": {
+        "academic_quality": { "type": "number", "minimum": 0, "maximum": 5 },
+        "methodology_rigor": { "type": "number", "minimum": 0, "maximum": 5 },
+        "citation_quality": { "type": "number", "minimum": 0, "maximum": 5 },
+        "visual_quality": { "type": "number", "minimum": 0, "maximum": 5 },
+        "overall": { "type": "number", "minimum": 0, "maximum": 5 }
+      }
+    }
+  }
+}

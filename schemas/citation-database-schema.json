@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Citation Database Schema",
+  "description": "Schema for the internal citation database maintained during paper generation",
+  "type": "object",
+  "required": ["metadata", "citations"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "paper_title": { "type": "string" },
+        "citation_style": { "type": "string", "enum": ["harvard", "apa", "ieee", "mla", "chicago"] },
+        "total_citations": { "type": "integer" },
+        "last_updated": { "type": "string", "format": "date-time" },
+        "quality_summary": {
+          "type": "object",
+          "properties": {
+            "tier1_count": { "type": "integer" },
+            "tier2_count": { "type": "integer" },
+            "tier3_count": { "type": "integer" },
+            "tier4_count": { "type": "integer" },
+            "avg_credibility_score": { "type": "number" },
+            "avg_recency_score": { "type": "number" }
+          }
+        }
+      }
+    },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["key", "type", "title", "year", "authors"],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Unique citation key (e.g., 'smith2023', 'smith2023a')"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["article-journal", "book", "chapter", "conference-paper", "report", "thesis", "webpage", "preprint", "dataset", "software", "patent", "standard"]
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["family"],
+              "properties": {
+                "given": { "type": "string" },
+                "family": { "type": "string" },
+                "suffix": { "type": "string" }
+              }
+            }
+          },
+          "title": { "type": "string" },
+          "year": { "type": "integer" },
+          "month": { "type": "string" },
+          "container_title": { "type": "string", "description": "Journal name, book title, conference name" },
+          "volume": { "type": "string" },
+          "issue": { "type": "string" },
+          "pages": { "type": "string" },
+          "doi": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "arxiv_id": { "type": "string" },
+          "isbn": { "type": "string" },
+          "publisher": { "type": "string" },
+          "edition": { "type": "string" },
+          "editor": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "given": { "type": "string" },
+                "family": { "type": "string" }
+              }
+            }
+          },
+          "institution": { "type": "string" },
+          "accessed_date": { "type": "string", "format": "date" },
+          "assessment": {
+            "type": "object",
+            "properties": {
+              "credibility_score": { "type": "number", "minimum": 1, "maximum": 10 },
+              "relevance_score": { "type": "number", "minimum": 1, "maximum": 10 },
+              "recency_score": { "type": "number", "minimum": 1, "maximum": 10 },
+              "venue_tier": { "type": "integer", "minimum": 1, "maximum": 4 },
+              "is_seminal": { "type": "boolean" }
+            }
+          },
+          "content_summary": {
+            "type": "object",
+            "properties": {
+              "key_findings": { "type": "string" },
+              "methodology": { "type": "string" },
+              "sample_size": { "type": "string" },
+              "limitations_noted": { "type": "string" },
+              "relevance_to_paper": { "type": "string" }
+            }
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "cited_in_sections": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "citation_purpose": {
+                "type": "string",
+                "enum": ["supports_claim", "contradicts_claim", "provides_context", "methodology_reference", "data_source", "definition", "comparison"]
+              },
+              "first_cited_paragraph": { "type": "integer" },
+              "times_cited": { "type": "integer" }
+            }
+          },
+          "deduplication": {
+            "type": "object",
+            "properties": {
+              "potential_duplicates": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "is_preprint_of": { "type": "string" },
+              "superseded_by": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

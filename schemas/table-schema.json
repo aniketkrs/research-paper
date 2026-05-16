@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-paper-writer/schemas/table-schema.json",
+  "title": "Table",
+  "type": "object",
+  "required": ["id", "section", "caption", "rows"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^table-\\d+$" },
+    "number": { "type": "integer", "minimum": 1 },
+    "section": { "type": "string" },
+    "caption": { "type": "string", "minLength": 10 },
+    "headers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label"],
+        "properties": {
+          "label": { "type": "string" },
+          "unit": { "type": "string" },
+          "alignment": { "type": "string", "enum": ["left", "center", "right"] },
+          "is_numeric": { "type": "boolean" }
+        }
+      }
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": { "type": ["string", "number", "null"] }
+      }
+    },
+    "highlight_best": {
+      "type": "object",
+      "properties": {
+        "by_column": { "type": "boolean", "default": true },
+        "direction": { "type": "string", "enum": ["max", "min"] }
+      }
+    },
+    "footnotes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "n": { "type": "integer", "description": "Sample size if applicable." },
+    "files": {
+      "type": "object",
+      "properties": {
+        "csv": { "type": "string" },
+        "md": { "type": "string" },
+        "tex": { "type": "string" }
+      }
+    },
+    "in_text_references": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
