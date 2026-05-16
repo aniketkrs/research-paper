@@ -4,21 +4,21 @@
  * ==========================================================
  *
  * The PRIMARY recommended install path is:
- *   npx skills add aniketkrs/research-paper
+ *   npx skills add aniketkrs/research-paper --yes --skill '*'
  *
+ * The `--yes --skill '*'` flags make it one-shot, no prompts.
  * That's the runtime-neutral universal installer that detects all
  * compatible agent runtimes (Claude Code, OpenCode, Cursor, Cline,
  * Codex, Aider, Amp, Antigravity, AiderDesk, Augment, IBM Bob, and
- * 50+ others) and installs the skill into the universal
+ * 50+ others) and installs the skills into the universal
  * `.agents/skills/` directory used by all of them.
  *
- * This script is a SECONDARY direct-install fallback for users who
- * want to install without `npx skills`. It copies this repository
- * into a target skills directory.
+ * This script is a SECONDARY direct-install fallback. It installs ALL
+ * skills under <repo>/skills/ in one shot, no prompting.
  *
  * Usage:
- *   npx -y github:aniketkrs/research-paper install [--target <path>] [--scope user|project]
- *   npx -y github:aniketkrs/research-paper uninstall [--target <path>]
+ *   npx -y github:aniketkrs/research-paper install [--target <path>] [--scope user|project] [--skill <name>]
+ *   npx -y github:aniketkrs/research-paper uninstall [--target <path>] [--skill <name>]
  *   npx -y github:aniketkrs/research-paper status [--target <path>]
  *   npx -y github:aniketkrs/research-paper --help
  *
@@ -34,10 +34,9 @@ const fs = require("fs");
 const path = require("path");
 const os = require("os");
 
-const SKILL_NAME = "research-paper";
-// The actual skill content lives in <repo>/skills/<SKILL_NAME>/
-// (the skills.sh / npx skills convention).
-const SKILL_ROOT = path.resolve(__dirname, "..", "skills", SKILL_NAME);
+// All skills live under <repo>/skills/. The installer auto-discovers them.
+const REPO_ROOT = path.resolve(__dirname, "..");
+const SKILLS_ROOT = path.join(REPO_ROOT, "skills");
 
 // ---------------------------------------------------------------------------
 // Argument parsing
@@ -52,6 +51,8 @@ function parseArgs(argv) {
       args.options.target = argv[++i];
     } else if (a === "--scope") {
       args.options.scope = argv[++i];
+    } else if (a === "--skill") {
+      args.options.skill = argv[++i];
     } else if (a.startsWith("--")) {
       const [k, v] = a.slice(2).split("=");
       args.options[k] = v === undefined ? true : v;
@@ -60,6 +61,29 @@ function parseArgs(argv) {
     }
   }
   return args;
+}
+
+// ---------------------------------------------------------------------------
+// Skill discovery
+// ---------------------------------------------------------------------------
+function discoverSkills() {
+  if (!fs.existsSync(SKILLS_ROOT)) return [];
+  return fs.readdirSync(SKILLS_ROOT, { withFileTypes: true })
+    .filter((e) => e.isDirectory())
+    .filter((e) => fs.existsSync(path.join(SKILLS_ROOT, e.name, "SKILL.md")))
+    .map((e) => e.name)
+    .sort();
+}
+
+function readSkillVersion(skillName) {
+  try {
+    const m = JSON.parse(
+      fs.readFileSync(
+        path.join(SKILLS_ROOT, skillName, "manifest.json"), "utf-8"));
+    return m.version || "unknown";
+  } catch (_) {
+    return "unknown";
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -73,7 +97,6 @@ function resolveTarget(opts) {
   if (opts.scope === "user" || opts.scope === "global") {
     return path.resolve(os.homedir(), ".agents", "skills");
   }
-  // Default: project scope (mirrors `npx skills` default)
   return path.resolve(process.cwd(), ".agents", "skills");
 }
 
@@ -106,121 +129,146 @@ function rmDir(d) {
 // ---------------------------------------------------------------------------
 // Commands
 // ---------------------------------------------------------------------------
+function pickSkills(opts, available) {
+  if (!opts.skill || opts.skill === "*" || opts.skill === "all") {
+    return available.slice();
+  }
+  // Comma-separated list
+  const requested = opts.skill.split(",").map((s) => s.trim()).filter(Boolean);
+  const missing = requested.filter((s) => !available.includes(s));
+  if (missing.length) {
+    console.error(`✗ Unknown skill(s): ${missing.join(", ")}`);
+    console.error(`  Available: ${available.join(", ")}`);
+    process.exit(1);
+  }
+  return requested;
+}
+
 function cmdInstall(opts) {
+  const available = discoverSkills();
+  if (available.length === 0) {
+    console.error("✗ No skills found in repo. Expected skills/<name>/SKILL.md.");
+    process.exit(1);
+  }
   const target = resolveTarget(opts);
   ensureDir(target);
-  const dest = path.join(target, SKILL_NAME);
 
-  if (fs.existsSync(dest)) {
-    console.log(`! Skill already installed at: ${dest}`);
-    console.log(`  Replacing with current version...`);
-    rmDir(dest);
+  const skills = pickSkills(opts, available);
+  console.log(`Installing ${skills.length} skill${skills.length === 1 ? "" : "s"} to ${target}\n`);
+
+  for (const name of skills) {
+    const src = path.join(SKILLS_ROOT, name);
+    const dest = path.join(target, name);
+    if (fs.existsSync(dest)) {
+      console.log(`  · ${name}: replacing existing install`);
+      rmDir(dest);
+    }
+    copyDir(src, dest);
+    const version = readSkillVersion(name);
+    console.log(`  ✓ ${name.padEnd(22)} v${version}`);
   }
 
-  copyDir(SKILL_ROOT, dest);
-
-  // Read version from manifest
-  let version = "unknown";
-  try {
-    const manifest = JSON.parse(
-      fs.readFileSync(path.join(dest, "manifest.json"), "utf-8")
-    );
-    version = manifest.version || version;
-  } catch (_) {}
-
-  console.log(`✓ Installed ${SKILL_NAME} v${version}`);
-  console.log(`  Location: ${dest}`);
-  console.log("");
-  console.log("Tip: the recommended install path is the runtime-neutral");
-  console.log("     'npx skills add aniketkrs/research-paper' command,");
-  console.log("     which auto-detects all installed agent runtimes.");
   console.log("");
   console.log("Next steps:");
   console.log("  1. Restart your agent session.");
-  console.log(`  2. Try:  /research "your topic" --depth quick`);
-  console.log(`  3. Read: ${path.join(dest, "SKILL.md")}`);
+  console.log("  2. Try one of:");
+  console.log("       /research \"your topic\" --style ieee");
+  console.log("       /find-paper \"your topic\"");
+  console.log("       /read-paper https://arxiv.org/abs/1706.03762");
+  console.log("");
+  console.log("Tip: the runtime-neutral install is");
+  console.log("       npx skills add aniketkrs/research-paper --yes --skill '*'");
 }
 
 function cmdUninstall(opts) {
+  const available = discoverSkills();
   const target = resolveTarget(opts);
-  const dest = path.join(target, SKILL_NAME);
-  if (!fs.existsSync(dest)) {
-    console.log(`Skill not installed at: ${dest}`);
-    process.exit(1);
+  const skills = pickSkills(opts, available);
+
+  let removed = 0;
+  for (const name of skills) {
+    const dest = path.join(target, name);
+    if (fs.existsSync(dest)) {
+      rmDir(dest);
+      console.log(`  ✓ Removed ${name}`);
+      removed++;
+    } else {
+      console.log(`  · Not installed: ${name}`);
+    }
   }
-  rmDir(dest);
-  console.log(`✓ Uninstalled ${SKILL_NAME}`);
-  console.log(`  Removed: ${dest}`);
+  if (removed === 0) {
+    console.log("Nothing to remove.");
+  }
 }
 
 function cmdStatus(opts) {
+  const available = discoverSkills();
   const target = resolveTarget(opts);
-  const dest = path.join(target, SKILL_NAME);
-  console.log(`Target directory: ${target}`);
-  if (fs.existsSync(dest)) {
-    let version = "unknown";
-    try {
-      const manifest = JSON.parse(
-        fs.readFileSync(path.join(dest, "manifest.json"), "utf-8")
-      );
-      version = manifest.version || version;
-    } catch (_) {}
-    console.log(`Status: installed`);
-    console.log(`  Version: ${version}`);
-    console.log(`  Path: ${dest}`);
-    const skillMd = path.join(dest, "SKILL.md");
-    if (fs.existsSync(skillMd)) {
-      console.log(`  SKILL.md: ✓`);
+  console.log(`Target directory: ${target}\n`);
+  for (const name of available) {
+    const dest = path.join(target, name);
+    if (fs.existsSync(dest)) {
+      let version = "unknown";
+      try {
+        version = JSON.parse(
+          fs.readFileSync(path.join(dest, "manifest.json"), "utf-8")
+        ).version || version;
+      } catch (_) {}
+      const ok = fs.existsSync(path.join(dest, "SKILL.md"));
+      console.log(`  ✓ ${name.padEnd(22)} v${version}  ${ok ? "OK" : "(corrupted — reinstall)"}`);
     } else {
-      console.log(`  SKILL.md: ✗ (corrupted install — try reinstalling)`);
+      console.log(`  · ${name.padEnd(22)} not installed`);
     }
-  } else {
-    console.log(`Status: not installed`);
-    console.log(`  Recommended install:  npx skills add aniketkrs/research-paper`);
-    console.log(`  Direct install:        npx -y github:aniketkrs/research-paper install`);
   }
+  console.log("");
+  console.log(`To install all: npx -y github:aniketkrs/research-paper install`);
+  console.log(`To install one: npx -y github:aniketkrs/research-paper install --skill <name>`);
 }
 
 function cmdHelp() {
+  const available = discoverSkills();
   console.log(`
 research-paper — Direct installer (alternative to 'npx skills add')
 
-PREFERRED install path (runtime-neutral, auto-detects all agents):
-  npx skills add aniketkrs/research-paper
+PREFERRED install path (runtime-neutral, no prompts, all skills):
+  npx skills add aniketkrs/research-paper --yes --skill '*'
 
-DIRECT install path (this script):
-  npx -y github:aniketkrs/research-paper install   [--target <path>] [--scope user|project]
-  npx -y github:aniketkrs/research-paper uninstall [--target <path>]
+DIRECT install path (this script — installs all skills by default):
+  npx -y github:aniketkrs/research-paper install   [--target <path>] [--scope user|project] [--skill <name>]
+  npx -y github:aniketkrs/research-paper uninstall [--target <path>] [--skill <name>]
   npx -y github:aniketkrs/research-paper status    [--target <path>]
   npx -y github:aniketkrs/research-paper --help
 
 Options:
-  --target <path>   Install destination (default: $AGENT_SKILLS_DIR or ./.agents/skills/)
-  --scope user      User scope (~/.agents/skills/)
-  --scope project   Project scope (./.agents/skills/, default)
-  --help, -h        Show this help
+  --target <path>     Install destination (default: $AGENT_SKILLS_DIR or ./.agents/skills/)
+  --scope user        User scope (~/.agents/skills/)
+  --scope project     Project scope (./.agents/skills/, default)
+  --skill <name(s)>   Comma-separated skill names, or '*' for all (default: all)
+  --help, -h          Show this help
 
 Environment:
-  AGENT_SKILLS_DIR  Override the default install directory.
+  AGENT_SKILLS_DIR    Override the default install directory.
+
+Available skills in this repo:
+${available.map((n) => "  · " + n + "  v" + readSkillVersion(n)).join("\n")}
 
 Examples:
-  # Project-scope (default; like 'npx skills add' default)
+  # Install all three (default)
   npx -y github:aniketkrs/research-paper install
 
-  # User-scope (global)
+  # Install only one
+  npx -y github:aniketkrs/research-paper install --skill research-paper
+
+  # Install user-scope
   npx -y github:aniketkrs/research-paper install --scope user
 
-  # Custom directory
-  npx -y github:aniketkrs/research-paper install --target ./my-agents-folder
-
-  # Status
-  npx -y github:aniketkrs/research-paper status
-
-  # Uninstall
-  npx -y github:aniketkrs/research-paper uninstall
+  # Custom target
+  npx -y github:aniketkrs/research-paper install --target ~/my-agents/
 
 Once installed, in any compatible agent session:
-  /research "your topic" --depth standard --style ieee
+  /research "your topic" --style ieee
+  /find-paper "your topic"
+  /read-paper <URL or path>
 
 See:
   https://github.com/aniketkrs/research-paper

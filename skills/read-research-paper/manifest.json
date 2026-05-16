@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/anthropic-agent-skill.json",
   "name": "read-research-paper",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Renders any research paper (URL / arXiv ID / DOI / PDF / pasted text) into a visually engaging multi-format reading experience — mind maps, method flowcharts, key-finding infographics, comparison tables, related-work timelines, and a plain-English layer alongside the technical content. Caches everything locally; ships a bundled corpus of canonical papers for offline fallback.",
   "author": "Aniket Kumar (aniketkrs)",
   "license": "MIT",
@@ -159,7 +159,7 @@
 
   "files": {
     "entry": "SKILL.md",
-    "instructions": ["instructions/core.md"],
+    "instructions": ["instructions/core.md", "instructions/freshness.md"],
     "workflows": [
       "workflows/ingestion.md",
       "workflows/visualization.md",

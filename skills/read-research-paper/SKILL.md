@@ -2,7 +2,7 @@
 name: read-research-paper
 description: Renders ANY research paper (URL / arXiv ID / DOI / PDF / pasted text) into a visually engaging multi-format reading experience — with mind maps, method flowcharts, key-finding infographics, comparison tables, related-work timelines, and a plain-English layer alongside the technical content. Activates on slash commands (`/read-research-paper`, `/read-paper`, `/explain-paper`, `/visualize-paper`) and natural-language requests like "read this research paper [URL]", "explain this paper [URL]", "make this paper visual [URL]". Caches every fetched paper locally so re-asks are instant. Ships with a bundled corpus of canonical papers for offline fallback. Hands off to `research-paper` for citation reuse and to `get-research-paper` for related-work expansion. Runtime-neutral.
 license: MIT
-version: 1.1.0
+version: 1.2.0
 ---
 
 # Read Research Paper
@@ -153,6 +153,12 @@ section.
 
 ## 3. Operating principles
 
+0. **Anchor to TODAY's date.** When the input is a topic-style query
+   (rather than a specific URL/DOI/path), determine today's actual
+   date first (via `date -u +%Y-%m-%d`, runtime context, or asking
+   the user). For a specific paper input, the freshness check
+   compares the paper's publication date to today and flags
+   stale findings. Full protocol: `instructions/freshness.md`.
 1. **Don't bluff.** If a URL doesn't resolve or a PDF can't be
    parsed, say so. Mark `[FETCH FAILED — fallback to cache | model
    knowledge | corpus]` and surface in `Known-gaps.md`.

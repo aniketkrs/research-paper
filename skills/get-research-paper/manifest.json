@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/anthropic-agent-skill.json",
   "name": "get-research-paper",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Discovers, retrieves, ranks, and summarizes real existing research papers on any topic. Searches arXiv, Google Scholar, PubMed, Semantic Scholar, and reputable open repositories; returns a curated reading list with verified DOIs, key findings, and citation-ready metadata. Hands off cleanly to the `research-paper` skill for paper writing. Runtime-neutral.",
   "author": "Aniket Kumar (aniketkrs)",
   "license": "MIT",
@@ -122,18 +122,23 @@
     "default_n": 10,
     "max_n": 100,
     "default_quality_floor": 5,
-    "default_year_range": "last-10",
+    "default_year_range": "last-3",
+    "default_year_range_legacy": "last-10 (deprecated)",
     "default_depth": "standard",
     "default_handoff": false,
     "verify_dois": true,
     "check_retraction": true,
-    "deduplicate": true
+    "deduplicate": true,
+    "two_pass_search": true,
+    "recency_boost": true,
+    "anchor_to_today_date": true
   },
 
   "files": {
     "entry": "SKILL.md",
     "instructions": [
-      "instructions/core.md"
+      "instructions/core.md",
+      "instructions/freshness.md"
     ],
     "workflows": [
       "workflows/search.md",

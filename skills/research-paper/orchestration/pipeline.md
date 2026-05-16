@@ -23,6 +23,36 @@ If any of these is missing, ask the user **once** before proceeding.
 
 ---
 
+## 0. Phase 0 — Anchor to today's date (MANDATORY, run FIRST)
+
+**Goal:** prevent silent drift to the training-data cutoff.
+
+**Procedure:**
+
+1. Determine today's actual date through the first source that's
+   available:
+   - System clock via shell: `date -u +%Y-%m-%d`.
+   - Runtime context (env var, IDE, agent metadata).
+   - Filesystem timestamps of session files.
+   - User's message (if they mentioned a date).
+   - Web fetch of a time API (if web tools available).
+   - LAST resort: ask the user "What's today's date?".
+   - **Never** default silently to the training-cutoff date.
+2. Persist the resolved date to `paper-spec.md → context.today_date`.
+3. Resolve every relative year range against today (e.g., `--years
+   last-3` → `(today.year - 3, today.year)`).
+4. If the model knows its training cutoff, also persist that to
+   `paper-spec.md → context.training_cutoff` so downstream phases
+   can flag staleness.
+
+**Output:** `paper-spec.md → context.today_date`,
+`paper-spec.md → context.year_range`,
+`paper-spec.md → context.training_cutoff`.
+
+Full protocol: **`instructions/freshness.md`**.
+
+---
+
 ## 1. Intake and scoping
 
 **Goal:** convert vague request into a precise paper specification.

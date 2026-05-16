@@ -106,6 +106,7 @@ console.log("\n• Skill structure (skills/research-paper/)");
   "instructions/activation.md",
   "instructions/multi-agent.md",
   "instructions/voice-and-tone.md",
+  "instructions/freshness.md",
   "orchestration/pipeline.md",
   "orchestration/agents.md",
   "orchestration/routing.md",
@@ -223,6 +224,7 @@ console.log("\n• get-research-paper skill structure (skills/get-research-paper
   "SKILL.md",
   "manifest.json",
   "instructions/core.md",
+  "instructions/freshness.md",
   "workflows/search.md",
   "workflows/synthesis.md",
   "workflows/handoff-to-writer.md",
@@ -298,6 +300,7 @@ console.log("\n• read-research-paper skill structure (skills/read-research-pap
   "SKILL.md",
   "manifest.json",
   "instructions/core.md",
+  "instructions/freshness.md",
   "workflows/ingestion.md",
   "workflows/visualization.md",
   "workflows/caching.md",
@@ -423,6 +426,37 @@ test("convert_output.py --list-formats includes pdf, docx, html", () => {
   assert(/\bdocx\b/.test(r.out), "docx not listed");
   assert(/\bhtml\b/.test(r.out), "html not listed");
   assert(/\bepub\b/.test(r.out), "epub not listed");
+});
+
+console.log("\n• Freshness protocol wired through orchestration");
+test("research-paper orchestration has Phase 0 (today's date)", () => {
+  const text = readText(path.join(SKILL, "orchestration", "pipeline.md"));
+  assert(/Phase 0/.test(text), "Phase 0 not declared in pipeline.md");
+  assert(/today.s date/i.test(text), "today's date not mentioned");
+  assert(/freshness\.md/.test(text), "freshness.md not referenced");
+});
+test("get-research-paper search has Phase 0 (today's date)", () => {
+  const text = readText(path.join(SKILL_GET, "workflows", "search.md"));
+  assert(/Phase 0/.test(text), "Phase 0 not declared in search.md");
+  assert(/today.s date/i.test(text), "today's date not mentioned");
+});
+test("manifests reference instructions/freshness.md", () => {
+  for (const skillPath of [SKILL, SKILL_GET, SKILL_READ]) {
+    const m = readJson(path.join(skillPath, "manifest.json"));
+    const list = JSON.stringify(m.files);
+    assert(/instructions\/freshness\.md/.test(list),
+      `${path.basename(skillPath)} manifest does not reference freshness.md`);
+  }
+});
+
+console.log("\n• Direct installer (bin/install.js)");
+test("bin/install.js auto-discovers all 3 skills", () => {
+  const text = readText(path.join(REPO_ROOT, "bin", "install.js"));
+  assert(/discoverSkills/.test(text), "discoverSkills function missing");
+  assert(/SKILLS_ROOT/.test(text), "SKILLS_ROOT not defined");
+  // Make sure it doesn't hardcode a single skill name
+  assert(!/const SKILL_NAME = ['"]research-paper['"]/.test(text),
+    "installer still hardcodes single skill");
 });
 
 // ---------------------------------------------------------------------------

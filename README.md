@@ -12,9 +12,16 @@ After install, in any compatible agent session:
 
 ```
 /research "graph neural networks for fraud detection" --style ieee
-/find-paper "retrieval-augmented generation"
+/find-paper "retrieval-augmented generation" --years last-3
 /read-paper https://arxiv.org/abs/1706.03762
 ```
+
+> **Date freshness:** every paper run starts by checking today's actual
+> date (via `date -u +%Y-%m-%d` or runtime context). Year-range flags
+> like `--years last-3` are computed from today, not from the model's
+> training cutoff. The skill never silently uses stale data — see
+> [`instructions/freshness.md`](skills/research-paper/instructions/freshness.md)
+> in any of the three skills.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Skills: 3](https://img.shields.io/badge/skills-3-green.svg)](#the-three-skills)
@@ -42,38 +49,38 @@ runtimes via [`npx skills`](https://www.npmjs.com/package/skills).
 
 ## Install
 
-### One command — all three skills
+### One command — all three skills, no prompts
 
 ```bash
-npx skills add aniketkrs/research-paper
+npx skills add aniketkrs/research-paper --yes --skill '*'
 ```
 
-That's it. The installer detects every agent runtime on your machine
-and installs the skills into the universal `.agents/skills/`
-directory used by all of them.
+The `--yes --skill '*'` flags install all three skills in one shot
+without prompting. The installer auto-detects every agent runtime on
+your machine and places the skills in the universal `.agents/skills/`
+directory.
 
 ### Verify
 
 ```bash
 npx skills list
-npx skills find research-paper
 ```
 
-Expected: **`Found 3 skills`**.
+Expected: **`research-paper`, `get-research-paper`, `read-research-paper`** all listed.
 
 ### Other install options
 
 ```bash
 # Install only one skill
-npx skills add aniketkrs/research-paper --skill research-paper
+npx skills add aniketkrs/research-paper --yes --skill research-paper
 
 # Pin to a version
-npx skills add aniketkrs/research-paper#v2.3.0
+npx skills add aniketkrs/research-paper#v2.4.0 --yes --skill '*'
 
 # User-scope (global) instead of project-scope
-npx skills add aniketkrs/research-paper --global
+npx skills add aniketkrs/research-paper --yes --skill '*' --global
 
-# Direct from GitHub (no skills CLI)
+# Direct from GitHub (no skills CLI; this installer also installs all skills by default)
 npx -y github:aniketkrs/research-paper install
 ```
 

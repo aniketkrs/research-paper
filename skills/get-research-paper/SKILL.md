@@ -2,7 +2,7 @@
 name: get-research-paper
 description: Discovers, retrieves, ranks, and summarizes real existing research papers on any topic. Searches arXiv, Google Scholar, PubMed, Semantic Scholar, and reputable open repositories; returns a curated reading list with verified DOIs, key findings, and citation-ready metadata. Activates on slash commands (`/get-research-paper`, `/find-paper`, `/fetch-paper`, `/papers-on`, `/scholar`) and natural-language requests like "get research paper on …", "find papers about …", "what are the top papers on …". Hands off cleanly to the `research-paper` skill for paper writing. Runtime-neutral — works with Claude Code, OpenCode, Cursor, Cline, Codex, Aider, Amp, and 50+ agents.
 license: MIT
-version: 1.0.0
+version: 1.1.0
 ---
 
 # Get Research Paper
@@ -90,6 +90,11 @@ See `templates/reading-list.md`, `templates/paper-summary.md`,
 
 ## 3. Core principles
 
+0. **Anchor to TODAY's date FIRST.** Before any search, determine
+   today's actual date (via `date -u +%Y-%m-%d`, runtime context, or
+   asking the user). **Never default to training-cutoff dates.** Year
+   ranges like `--years last-3` are computed from today. Full protocol:
+   `instructions/freshness.md`.
 1. **Real papers only.** Never invent papers, DOIs, authors, or
    findings. Use only sources the model can verify (or honestly mark
    `[UNVERIFIED — offline]`).

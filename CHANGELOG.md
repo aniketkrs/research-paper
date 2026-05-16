@@ -4,6 +4,86 @@ All notable changes to **research-paper** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and the
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.4.0] — 2024-05-12
+
+### Fixed — date freshness (no more silent training-cutoff drift)
+
+User flagged that the agent was generating papers anchored to its
+training-data cutoff (~2022 era data) instead of using current
+information. Fix:
+
+- **New `instructions/freshness.md`** in all three skills with the
+  full date-anchoring protocol.
+- **Phase 0 added to `research-paper/orchestration/pipeline.md`** —
+  "Determine TODAY's date" runs BEFORE planning, search, or writing.
+- **Phase 0 added to `get-research-paper/workflows/search.md`** —
+  search plan can't be built before today's date is resolved.
+- Both Phase 0 phases run `date -u +%Y-%m-%d` (or check runtime
+  context, or ask the user) — never silently default to the
+  training-cutoff date.
+- **Year-range flags are now relative to today.** `--years last-3`
+  resolves to `(today.year - 3, today.year)`, not to a hardcoded
+  range.
+- **Default `--years` for `get-research-paper` changed to `last-3`**
+  (was `last-10` previously, which let too much old data in).
+- **Two-pass search** (`get-research-paper`): pass 1 = recent
+  (`last-3`), pass 2 = foundational (uncapped) — gets both state of
+  the art AND canonical anchors.
+- **Recency boost** in ranking: papers in the last 12 months get +1
+  to the recency score.
+- Operating principles in all three SKILL.md files now lead with
+  "Anchor to TODAY's date FIRST" as principle 0.
+- Validators flag papers that rely only on > 5-year-old sources
+  (severity: medium).
+- Outputs now declare freshness in the verification trail:
+  ```
+  Source tier: live-fetch / cache / bundled-corpus / model-knowledge
+  Today's date: <YYYY-MM-DD>
+  Latest cited paper: <YYYY-MM>
+  Freshness: fresh / dated / very-dated
+  ```
+
+### Fixed — installer no longer prompts for which skills to install
+
+User flagged that `npx skills add aniketkrs/research-paper` asked
+which skills to install, confusing newcomers. Fix:
+
+- **README and INSTALLATION** now lead with the non-interactive
+  command:
+  ```
+  npx skills add aniketkrs/research-paper --yes --skill '*'
+  ```
+- **`bin/install.js` (direct installer) auto-discovers all skills
+  under `skills/` and installs them in one shot by default.** No
+  more hardcoded single-skill behavior.
+- New `--skill <name>` flag for the direct installer if the user
+  wants only one (rare).
+- New `discoverSkills()` function reads `skills/<name>/SKILL.md`
+  to enumerate skills at runtime.
+- `--help` output now lists discovered skills with their versions.
+
+### Updated tests
+
+- 123/123 tests pass (was 116).
+- New tests:
+  - `freshness.md` exists in all 3 skills (registered in manifests
+    and present on disk).
+  - `research-paper/orchestration/pipeline.md` has Phase 0 with
+    "today's date" wording.
+  - `get-research-paper/workflows/search.md` has Phase 0 with
+    "today's date" wording.
+  - `bin/install.js` auto-discovers skills (no hardcoded single
+    skill name).
+
+### Versioning
+
+- Repo: 2.3.0 → 2.4.0
+- skills/research-paper: 2.3.0 → 2.4.0
+- skills/get-research-paper: 1.0.0 → 1.1.0
+- skills/read-research-paper: 1.1.0 → 1.2.0
+
+---
+
 ## [2.3.0] — 2024-05-12
 
 ### Added — multi-format file I/O

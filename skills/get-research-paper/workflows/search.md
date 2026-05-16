@@ -6,6 +6,30 @@ to disk between phases.
 
 ---
 
+## Phase 0 — Anchor to today's date (run FIRST)
+
+Before building a search plan, determine today's actual date:
+
+1. Run `date -u +%Y-%m-%d` (or check runtime context).
+2. Persist to `<working-dir>/today.txt`.
+3. Resolve relative year ranges against this date.
+
+| Input         | Resolves to (today = 2025-03-14)  |
+| ------------- | --------------------------------- |
+| `--years last-1` | `2024-2025`                        |
+| `--years last-3` | `2022-2025`                        |
+| `--years last-5` | `2020-2025`                        |
+| `--years recent`  | `2023-2025`                        |
+| `--years current` | `2024-2025`                        |
+| `--years 2020-2024` | literal (overrides relative)     |
+
+**Default `--years` is `last-3`.** This anchors searches to actual
+recent literature, not to the model's training cutoff.
+
+Full protocol: `instructions/freshness.md`.
+
+---
+
 ## Phase 1 — Intake and search-plan
 
 **Goal:** turn the user's topic into a precise search plan.

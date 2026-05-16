@@ -2,7 +2,7 @@
 name: research-paper
 description: Enterprise-grade autonomous research paper generation skill for AI coding agents — full papers, literature reviews, theses, whitepapers, surveys, policy briefs — with rigorous methodology, statistical validation, multi-style citations (Harvard / APA / IEEE / MLA / Chicago / Nature / arXiv-numeric), and rich visualizations. Activates on slash commands (`/research`, `/paper`, `/literature-review`, `/whitepaper`, `/thesis`, `/survey`, `/policy`) and on natural-language academic-writing requests. Runtime-neutral — works with Claude Code, OpenCode, Cursor, Cline, Codex, Aider, Amp, Antigravity, and 50+ agents via the `npx skills` installer.
 license: MIT
-version: 2.3.0
+version: 2.4.0
 ---
 
 # Research Paper
@@ -67,6 +67,13 @@ explanations. Those are handled normally without this skill.
 
 ## 2. Operating principles (read every time)
 
+0. **Anchor to TODAY's date FIRST.** Before any planning, search,
+   or writing, determine today's actual date — via system clock
+   (`date -u +%Y-%m-%d`), runtime context, or asking the user.
+   **Never default silently to the training-data cutoff.** Year
+   ranges (`--years last-3`) are computed from today, not from
+   the model's training year. Full protocol:
+   `instructions/freshness.md`.
 1. **Plan before writing.** Always start with the research plan in
    `orchestration/pipeline.md`. Never jump into prose.
 2. **Progressive disclosure.** Only read the file you need for the current
