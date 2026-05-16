@@ -2,7 +2,7 @@
 name: research-paper
 description: Enterprise-grade autonomous research paper generation skill for AI coding agents — full papers, literature reviews, theses, whitepapers, surveys, policy briefs — with rigorous methodology, statistical validation, multi-style citations (Harvard / APA / IEEE / MLA / Chicago / Nature / arXiv-numeric), and rich visualizations. Activates on slash commands (`/research`, `/paper`, `/literature-review`, `/whitepaper`, `/thesis`, `/survey`, `/policy`) and on natural-language academic-writing requests. Runtime-neutral — works with Claude Code, OpenCode, Cursor, Cline, Codex, Aider, Amp, Antigravity, and 50+ agents via the `npx skills` installer.
 license: MIT
-version: 2.2.0
+version: 2.3.0
 ---
 
 # Research Paper
@@ -179,9 +179,38 @@ This skill works in three tiers, gracefully degrading:
 | **1. + Filesystem read/write**          | Persist sections, bibliography, validation reports                 |
 | **2. + Python (pandas/matplotlib)**    | Real charts (PNG + SVG), statistical validation, data analysis    |
 | **2+. + Web search / fetch**            | DOI verification, source retrieval, retraction checks              |
+| **2+. + Pandoc** (optional)             | Output to PDF / DOCX / HTML / LaTeX / RTF / EPUB / ODT / PPTX     |
 
 If a tier is missing, the skill detects it and adapts — no silent failures.
 See **`toolchains/README.md`** for setup.
+
+### Output formats
+
+The skill produces Markdown by default. For other formats, run the
+output converter:
+
+```bash
+python toolchains/convert_output.py --input paper-final.md --to pdf --out paper.pdf
+python toolchains/convert_output.py --input paper-final.md --to docx
+python toolchains/convert_output.py --input paper-final.md --to html
+python toolchains/convert_output.py --input paper-final.md --to tex
+python toolchains/convert_output.py --input paper-final.md --to epub
+```
+
+Supported targets (via Pandoc): `md` (always), `html`, `docx`, `pdf`
+(needs LaTeX), `tex`, `rtf`, `epub`, `odt`, `pptx`.
+
+Self-test:
+```bash
+python toolchains/convert_output.py --self-test
+```
+
+The user can also request a non-Markdown output directly:
+
+```
+/research "topic" --output paper.pdf
+/research "topic" --output paper.docx
+```
 
 ---
 

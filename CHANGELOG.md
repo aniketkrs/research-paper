@@ -4,6 +4,111 @@ All notable changes to **research-paper** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and the
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.3.0] — 2024-05-12
+
+### Added — multi-format file I/O
+
+The skills can now **read** any of these as input and **write** any
+of these as output, with graceful degradation when libraries aren't
+installed:
+
+#### Read (in `read-research-paper`)
+
+| Format | Extensions | Always available? |
+|---|---|---|
+| Markdown, plain text, JSON | `.md`, `.markdown`, `.txt`, `.json` | yes |
+| LaTeX | `.tex`, `.latex` | yes (regex de-LaTeX) |
+| HTML | `.html`, `.htm` | yes (regex fallback) |
+| CSV / TSV | `.csv`, `.tsv` | yes (basic via stdlib) |
+| RTF | `.rtf` | yes (regex fallback) |
+| **PDF** | `.pdf` | install `pdfplumber` or `pypdf` |
+| **DOCX** | `.docx` | install `python-docx` |
+| **PPTX** | `.pptx` | install `python-pptx` |
+| **XLSX** | `.xlsx`, `.xls` | install `pandas` + `openpyxl` |
+| **EPUB** | `.epub` | install `ebooklib` |
+| **Images** (OCR) | `.png`, `.jpg`, `.tiff`, `.bmp` | install `pytesseract` + Tesseract |
+
+#### Write (in `research-paper`)
+
+| Format | Extension | Renderer |
+|---|---|---|
+| Markdown | `.md` | native (always) |
+| HTML | `.html` | Pandoc |
+| DOCX | `.docx` | Pandoc |
+| LaTeX | `.tex` | Pandoc |
+| **PDF** | `.pdf` | Pandoc + LaTeX engine |
+| RTF | `.rtf` | Pandoc |
+| EPUB | `.epub` | Pandoc |
+| ODT | `.odt` | Pandoc |
+| PPTX | `.pptx` | Pandoc |
+
+### New toolchains
+
+- **`read-research-paper/toolchains/read_any_file.py`** — universal
+  file reader with format detection, graceful degradation, self-test.
+- **`research-paper/toolchains/convert_output.py`** — universal output
+  converter wrapping Pandoc, with explicit "install X" messages
+  when dependencies are missing.
+
+### New documentation
+
+- **`read-research-paper/sources/file-formats.md`** — comprehensive
+  reference for both read and write formats, install commands per OS,
+  and self-test instructions.
+
+### Updated SKILL.md files
+
+- `read-research-paper/SKILL.md` now lists all 17+ supported input
+  formats with one-line install commands.
+- `research-paper/SKILL.md` now documents the output-conversion
+  toolchain with target formats, renderers, and `--output paper.pdf`
+  invocation.
+
+### Updated manifests
+
+- `read-research-paper/manifest.json` — `supported_input_formats`
+  field added with all 17+ extensions; `python_dependencies.recommended`
+  expanded to cover all readers.
+- `research-paper/manifest.json` — `output_formats` expanded from 4
+  to 11 formats including PDF/DOCX/EPUB/ODT/PPTX.
+
+### Updated tests
+
+- 116/116 tests pass (was 110).
+- New tests cover `read_any_file.py --self-test`, `--list-formats`
+  (verifies pdf/docx/pptx/xlsx/tex/html/epub all listed),
+  `convert_output.py --self-test`, and `--list-formats`.
+
+### Updated README
+
+- Complete rewrite. Removed the "merged successor of …" lineage
+  passage per user feedback.
+- New layout optimized for readability: hero install command at the
+  top, three-skill table, end-to-end workflow diagram, supported file
+  formats prominently displayed, troubleshooting matrix.
+- Added shields/badges (license, skill count, test count).
+- Quick-start section with three concrete examples.
+- Compatibility matrix listing 50+ supported runtimes.
+- Versioning history table.
+
+### Verified
+
+- Live multi-format reads tested: `.md` (with structure), `.json`
+  (parsed), `.tex` (de-LaTeX'd cleanly with `[CITE]` placeholders),
+  `.html` (regex fallback works without bs4).
+- All 3 skills detected by `npx skills add aniketkrs/research-paper --list`.
+- Both new toolchain self-tests pass on Windows (cp1252 console-safe).
+
+### Versioning
+
+- Repo: 2.2.0 → 2.3.0
+- skills/research-paper: 2.2.0 → 2.3.0 (added `convert_output.py`)
+- skills/get-research-paper: 1.0.0 (no changes)
+- skills/read-research-paper: 1.0.0 → 1.1.0 (added `read_any_file.py`,
+  `sources/file-formats.md`, expanded format support)
+
+---
+
 ## [2.2.0] — 2024-05-12
 
 ### Added — third skill: `read-research-paper`

@@ -1,361 +1,472 @@
 # research-paper
 
-> **Three complementary agent skills for academic research, in one repo.**
->
-> | Skill | What it does | Activation |
-> |---|---|---|
-> | `research-paper` | **WRITES** publication-ready research papers, lit reviews, theses, whitepapers, surveys, policy briefs | `/research`, `/paper`, `/literature-review`, `/whitepaper`, `/thesis`, `/survey`, `/policy` |
-> | `get-research-paper` | **FINDS** real existing papers — searches arXiv, Scholar, PubMed, Semantic Scholar; returns curated reading list with verified DOIs | `/get-research-paper`, `/find-paper`, `/papers-on`, `/scholar` |
-> | `read-research-paper` | **READS** ANY paper (URL / arXiv ID / DOI / PDF) and renders it as a visually engaging multi-format experience with mind maps, flowcharts, infographics, and a plain-English layer | `/read-research-paper`, `/read-paper`, `/explain-paper`, `/visualize-paper`, `/tldr-paper` |
-
-The three skills are designed to work together:
-
-```
-  /get-research-paper "topic"        ←  discover papers on a topic
-              │
-              ▼
-   bibliography.yaml + reading-list.md
-              │
-              ▼
-  /read-research-paper <URL>         ←  visualize ANY ONE paper
-              │
-              ▼
-   paper-visual.md + figures/ + cache/
-              │
-              ▼
-  /research "topic" --bibliography ... ←  write a NEW paper grounded
-                                           in real, curated sources
-```
-
-Or use any of them standalone — they don't require each other.
-
-Runtime-neutral. Works with **Claude Code, OpenCode, Cursor, Cline,
-Codex, Aider, Amp, Antigravity, AiderDesk, Augment, IBM Bob,** and 50+
-other agents via the `npx skills` installer.
-
-This skill is the merged, refactored, and upgraded successor to
-[`research-paper-writer`](https://github.com/aniketkrs/research-paper-writer)
-and [`research-paper-engine`](https://github.com/aniketkrs/research-paper-engine).
-It takes the strongest pieces of each and adds production-grade
-multi-agent orchestration, long-context handling, persistent memory,
-quality gates, and deterministic citation tooling.
-
----
-
-## Quick install
-
-### One-liner (recommended) — installs BOTH skills
+> Three agent skills for academic research, in one repo. **Find** real papers,
+> **read** any paper as a visual experience, and **write** new papers grounded
+> in real sources. Runtime-neutral — works with 50+ AI coding agents.
 
 ```bash
 npx skills add aniketkrs/research-paper
 ```
 
-The `npx skills` CLI auto-detects every active agent runtime
-(Claude Code, OpenCode, Cursor, Cline, Codex, Aider, etc.) and installs
-both skills into the universal `.agents/skills/` directory used by all
-of them.
+After install, in any compatible agent session:
 
-### Install only one
+```
+/research "graph neural networks for fraud detection" --style ieee
+/find-paper "retrieval-augmented generation"
+/read-paper https://arxiv.org/abs/1706.03762
+```
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Skills: 3](https://img.shields.io/badge/skills-3-green.svg)](#the-three-skills)
+[![Tests: 116/116](https://img.shields.io/badge/tests-116%2F116-brightgreen.svg)](tests/)
+
+---
+
+## What this is
+
+Three small, focused skills that work together — or independently — to
+make academic-paper work fast, rigorous, and not boring.
+
+| | Skill | One-line job |
+|---|---|---|
+| ✍️ | **`research-paper`** | **Writes** new papers — research papers, lit reviews, theses, whitepapers, surveys, policy briefs |
+| 🔎 | **`get-research-paper`** | **Finds** real existing papers — searches arXiv, Scholar, PubMed, Semantic Scholar |
+| 📖 | **`read-research-paper`** | **Reads** any paper (URL / arXiv / DOI / PDF / DOCX / PPTX / image) and renders it visually |
+
+All three are runtime-neutral. They install with one command and work
+with **Claude Code, OpenCode, Cursor, Cline, Codex, Aider, Amp,
+Antigravity, AiderDesk, Augment, IBM Bob,** and 50+ other agent
+runtimes via [`npx skills`](https://www.npmjs.com/package/skills).
+
+---
+
+## Install
+
+### One command — all three skills
 
 ```bash
-npx skills add aniketkrs/research-paper --skill research-paper
-npx skills add aniketkrs/research-paper --skill get-research-paper
+npx skills add aniketkrs/research-paper
 ```
+
+That's it. The installer detects every agent runtime on your machine
+and installs the skills into the universal `.agents/skills/`
+directory used by all of them.
 
 ### Verify
 
 ```bash
 npx skills list
 npx skills find research-paper
-npx skills find get-research-paper
 ```
 
-### Other install paths
+Expected: **`Found 3 skills`**.
+
+### Other install options
 
 ```bash
-# Pin to a version
-npx skills add aniketkrs/research-paper#v2.1.0
+# Install only one skill
+npx skills add aniketkrs/research-paper --skill research-paper
 
-# Globally (user-scope)
+# Pin to a version
+npx skills add aniketkrs/research-paper#v2.3.0
+
+# User-scope (global) instead of project-scope
 npx skills add aniketkrs/research-paper --global
 
 # Direct from GitHub (no skills CLI)
 npx -y github:aniketkrs/research-paper install
 ```
 
-For per-platform manual install instructions, see
-**[`INSTALLATION.md`](INSTALLATION.md)**.
+For per-platform manual install (Claude Desktop, claude.ai web,
+Anthropic API/SDK, etc.), see
+**[INSTALLATION.md](INSTALLATION.md)**.
 
 ---
 
-## End-to-end workflow (both skills together)
+## The three skills
+
+### ✍️ research-paper — writes new papers
+
+Produces publication-ready research papers, literature reviews,
+theses, whitepapers, surveys, and policy briefs.
+
+**Trigger it:**
+```
+/research "topic" --style ieee --depth comprehensive
+/literature-review "topic" --systematic --sources 50
+/whitepaper "topic" --audience technical
+/thesis "Chapter 3: Methodology" --style harvard
+/policy "topic" --depth standard
+```
+
+…or in plain English: *"write a research paper on graph neural networks
+for fraud detection"*.
+
+**Produces:**
+- 10 paper formats: arXiv, IEEE, ACM, Nature, Harvard, lit-review,
+  thesis chapter, whitepaper, survey, policy brief.
+- 7 citation styles: Harvard, APA, IEEE, MLA, Chicago, Nature,
+  arXiv-numeric. Switchable with one flag.
+- Real visualizations: charts, tables, heatmaps, flowcharts, PRISMA
+  diagrams, forest plots.
+- Methodology section with sample-size justification and validity
+  threats.
+- Statistical validation with effect sizes, CIs, multiple-comparison
+  correction.
+- Three-persona simulated peer review (methodologist + domain expert
+  + reader).
+- Plain-English summary alongside the technical content.
+
+**What it won't do:** invent citations, DOIs, or coauthors.
+Unverifiable items are flagged `[UNVERIFIED]` and surfaced in
+`Known-gaps.md`.
+
+### 🔎 get-research-paper — finds papers on a topic
+
+Searches arXiv, Google Scholar, PubMed, Semantic Scholar, DBLP,
+ACM DL, IEEE Xplore, and OpenReview. Returns a curated reading list
+with verified DOIs, key findings, and ready-to-cite metadata.
+
+**Trigger it:**
+```
+/get-research-paper "topic" --n 25 --years 2020-2024 --depth deep
+/find-paper "topic"
+/papers-on "topic"
+/scholar "topic"
+```
+
+…or: *"find research papers on retrieval-augmented generation"*.
+
+**Produces:**
+- A ranked reading list (`reading-list.md`) with quality scores.
+- A canonical `bibliography.yaml` ready to feed the writer skill.
+- A 1–3 paragraph field briefing.
+- Source-quality scoring (authority + rigor + recency).
+- Diversity heuristics: per-author cap, per-venue cap, ≥1 review,
+  ≥1 foundational paper.
+- DOI verification + retraction screening (when web tools are
+  available).
+
+### 📖 read-research-paper — reads any paper, makes it not boring
+
+Take any paper input — arXiv URL, arXiv ID, DOI, PDF, DOCX, PPTX,
+image, plain text — and render it as a visual reading experience.
+
+**Trigger it:**
+```
+/read-research-paper https://arxiv.org/abs/1706.03762
+/read-paper ./paper.pdf
+/explain-paper https://doi.org/10.1145/3589334
+/visualize-paper ./slides.pptx
+/tldr-paper ./scan.png
+```
+
+…or: *"read this research paper [URL]"*, *"explain this paper"*,
+*"make this paper visual"*.
+
+**Produces a multi-layer Markdown rendering** with:
+- One-page infographic at the top (mind map + headline numbers).
+- TL;DR (5–8 sentences).
+- Plain-English summary (5–10 sentences).
+- Section-by-section walk-through with plain-English **alongside**
+  the technical content (not replacing it).
+- Method flowchart (Mermaid).
+- Key-findings infographic (matplotlib when available, Markdown
+  otherwise).
+- Comparison table to baselines.
+- Related-work timeline.
+- "Why this matters" footer.
+- Verification trail.
+
+**Three-tier "don't bluff" cascade:** local cache → live fetch →
+bundled corpus → model knowledge with `[UNVERIFIED]` flags. Source
+tier is always declared in the output footer.
+
+---
+
+## Supported file formats
+
+### Read (input)
+
+The `read-research-paper` skill handles **any** of these as input:
+
+| Format | Extensions | Always available? |
+|---|---|---|
+| Markdown, plain text, JSON | `.md`, `.markdown`, `.txt`, `.json` | ✅ |
+| LaTeX | `.tex`, `.latex` | ✅ |
+| HTML | `.html`, `.htm` | ✅ (with regex fallback) |
+| CSV / TSV | `.csv`, `.tsv` | ✅ (basic) |
+| RTF | `.rtf` | ✅ (with regex fallback) |
+| **PDF** | `.pdf` | install `pdfplumber` or `pypdf` |
+| **DOCX** | `.docx` | install `python-docx` |
+| **PPTX** | `.pptx` | install `python-pptx` |
+| **XLSX** | `.xlsx`, `.xls` | install `pandas` + `openpyxl` |
+| **EPUB** | `.epub` | install `ebooklib` |
+| **Images** (OCR) | `.png`, `.jpg`, `.tiff`, `.bmp` | install `pytesseract` + Tesseract |
+
+One command to enable everything:
+
+```bash
+pip install pdfplumber python-docx python-pptx pandas openpyxl \
+            beautifulsoup4 striprtf ebooklib pytesseract Pillow
+```
+
+### Write (output)
+
+The `research-paper` skill produces Markdown by default. To convert
+to other formats:
+
+| Format | Extension | Renderer |
+|---|---|---|
+| Markdown | `.md` | native (always) |
+| HTML | `.html` | Pandoc |
+| DOCX | `.docx` | Pandoc |
+| LaTeX | `.tex` | Pandoc |
+| **PDF** | `.pdf` | Pandoc + LaTeX engine |
+| RTF | `.rtf` | Pandoc |
+| EPUB | `.epub` | Pandoc |
+| ODT | `.odt` | Pandoc |
+| PPTX | `.pptx` | Pandoc |
+
+Install Pandoc (and optionally LaTeX for PDFs):
+
+```bash
+# macOS
+brew install pandoc                      # base
+brew install --cask mactex-no-gui         # for PDF output
+
+# Linux
+apt install pandoc                        # base
+apt install texlive                        # for PDF output
+
+# Windows
+choco install pandoc                       # or scoop install pandoc
+choco install miktex                        # for PDF output
+```
+
+Then:
+
+```bash
+/research "topic" --output paper.pdf
+/research "topic" --output paper.docx
+```
+
+**Self-test** to see what's available on your machine:
+
+```bash
+python skills/read-research-paper/toolchains/read_any_file.py --self-test
+python skills/research-paper/toolchains/convert_output.py --self-test
+```
+
+Full reference: [`skills/read-research-paper/sources/file-formats.md`](skills/read-research-paper/sources/file-formats.md).
+
+---
+
+## End-to-end workflow
+
+The three skills chain cleanly:
 
 ```
-# Step 1: Discover real papers on a topic
-/get-research-paper "graph neural networks for fraud detection" \
-    --n 25 --years 2020-2024 --style ieee --depth deep --handoff
+┌─────────────────────────────────────────────────────────────┐
+│   /find-paper "topic"                                        │
+│   └─→ reading-list.md + bibliography.yaml                    │
+└─────────────────────────────┬───────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│   /read-paper <URL>      (visualize ANY single paper)         │
+│   └─→ paper-visual.md  (mind map + flowchart + plain English) │
+└─────────────────────────────┬───────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│   /research "topic" --bibliography ./topic/bibliography.yaml  │
+│   └─→ paper-final.md → convert_output → paper.pdf / .docx    │
+└─────────────────────────────────────────────────────────────┘
+```
 
-# Produces:
-#   gnn-fraud-detection/
-#   ├── reading-list.md       ← human-readable curated list
-#   ├── bibliography.yaml     ← writer-ready citation database
-#   ├── briefing.md           ← 1-paragraph field synthesis
-#   └── Known-gaps.md          ← unverified items (if any)
+Or use any one standalone — they don't require each other.
 
-# Step 2: Write a paper using the curated bibliography
-/research "graph neural networks for fraud detection" \
-    --style ieee --depth comprehensive \
+---
+
+## Quick start
+
+### Find papers on a topic
+
+```
+/find-paper "transformer architectures for time-series forecasting" --n 10
+```
+
+The skill returns a curated reading list with verified DOIs, key
+findings per paper, and a `bibliography.yaml` ready for the writer
+skill.
+
+### Read a single paper visually
+
+```
+/read-paper https://arxiv.org/abs/1706.03762
+```
+
+The skill returns a multi-layer Markdown rendering with mind map,
+flowchart, infographic, and plain-English alongside the technical
+content. Cached locally so re-asking is instant.
+
+### Write a paper using a curated bibliography
+
+```
+/research "predicting customer churn with graph neural networks" \
+    --style ieee \
+    --depth comprehensive \
     --bibliography ./gnn-fraud-detection/bibliography.yaml
-
-# Produces a publication-ready IEEE-style paper grounded in the real
-# papers from step 1 — no re-searching, no fabricated citations.
 ```
 
-Or use either skill standalone — they don't require each other.
+The skill walks: plan → literature review → methodology → analysis →
+visualization → drafting → citations → validation → review → ship.
 
----
-
-## What you get
-
-The instant the skill is installed, requests like these activate it:
-
-- `/research "Retrieval-augmented code review" --style ieee --depth comprehensive`
-- `/literature-review "Transformer architectures 2017–2024" --systematic --sources 40`
-- `/whitepaper "Vector databases for RAG" --audience technical --length 15-pages`
-- `/thesis "Chapter 3: Methodology" --style harvard`
-- `/policy "Open-source AI governance" --depth standard`
-- "Write a research paper on graph neural networks for fraud detection."
-- "Format this draft as an IEEE conference paper with proper citations."
-- "Analyze this CSV and produce an academic-style findings report."
-- "Peer-review my thesis chapter and tighten the methodology."
-
-What it produces:
-
-- **Full papers** in arXiv / IEEE / ACM / Nature / Harvard styles plus
-  literature reviews, theses, whitepapers, survey papers, policy briefs.
-- **Rigorous methodology** with sample-size justification, validity
-  threats, and reproducibility statements.
-- **Statistical validation** with effect sizes, confidence intervals,
-  multiple-comparison correction, and assumption checks.
-- **Real visualizations** (charts, tables, heatmaps, flowcharts, PRISMA
-  diagrams, forest plots, geographic maps).
-- **Citation engine** for Harvard, APA, IEEE, MLA, Chicago (author–date
-  and notes-bibliography), Nature numeric, and arXiv-style — switchable
-  with one flag.
-- **Plain-English summary** alongside every paper for non-specialist
-  readers.
-- **Three-persona simulated peer review** (methodologist + domain
-  expert + reader) with consolidated revision report.
-- **Publication checklist** as the final gate.
-- **Known gaps block** that surfaces every unresolved issue.
-
-What it does **not** do:
-
-- It does not invent citations, DOIs, page numbers, or coauthors.
-  Unverifiable sources are flagged `[UNVERIFIED]` and surfaced in
-  `Known-gaps.md` — never silently fabricated.
-
----
-
-## Architectural pillars
-
-### 1. Multi-agent orchestration
-
-For comprehensive runs, the orchestrator dispatches specialist
-sub-agents (Researcher, Methodologist, Analyst, Visualizer, Writer,
-Citator, Validator, three Reviewer personas, Publisher) with strict
-read / write contracts that communicate only through the working
-directory. See **[`instructions/multi-agent.md`](instructions/multi-agent.md)**.
-
-### 2. Modular engines
-
-Three first-class engines:
-
-- **Citation engine** (`citation_engine/`) — styles, deduplication,
-  bibliography generation, source credibility scoring.
-- **Visualization engine** (`visualization_engine/`) — decision tree,
-  chart templates, caption generator, accessibility defaults.
-- **Methodology engine** (`methodology_engine/`) — frameworks,
-  sampling, statistical tests, full reporting templates.
-
-### 3. Long-context discipline
-
-Production-ready handling of papers that exceed the model's working
-context window:
-- Persist every artifact to disk (paper-spec, outline, bibliography,
-  methodology, analysis, sections, validation, review).
-- Read only what's needed for the current step.
-- Resumable runs with a `session-state.yaml` ledger.
-- Multi-file output for long papers.
-
-See **[`long_context/`](long_context/)** and **[`memory/`](memory/)**.
-
-### 4. Quality gates and known-gaps protocol
-
-The skill never fails silently. A final gate
-(`quality_control/final-gate.md`) blocks delivery on hard-quality
-violations. Anything that can't be auto-resolved surfaces in
-**`Known-gaps.md`** with severity, recommended fix, and affected
-artifacts.
-
----
-
-## Folder structure
-
-```
-research-paper/
-├── SKILL.md                          # Entry point (the agent reads this)
-├── manifest.json                     # Skill manifest / metadata
-├── package.json                      # npm metadata (for direct npx install)
-├── README.md                         # This file
-├── INSTALLATION.md                   # Per-platform install
-├── CHANGELOG.md                      # Versioned changes
-├── LICENSE                           # MIT
-├── bin/                              # Direct npx installer (alternative path)
-│   └── install.js
-├── instructions/                     # Core operating instructions
-│   ├── core.md
-│   ├── activation.md
-│   ├── multi-agent.md
-│   └── voice-and-tone.md
-├── orchestration/                    # The brain
-│   ├── pipeline.md                   # The 11-phase master pipeline
-│   ├── agents.md                     # Sub-agent topology summary
-│   ├── routing.md                    # Format / style / depth routing
-│   └── failure-handling.md           # Per-phase recovery matrix
-├── workflows/                        # Phase-specific playbooks
-├── prompts/                          # Internal sub-prompts (×9)
-├── citation_engine/                  # First-class citation system
-├── visualization_engine/             # Chart-selection brain
-├── methodology_engine/               # Research design + stats
-├── academic_formats/                 # Per-venue style notes (×5)
-├── templates/                        # 10 paper templates
-├── validators/                       # Mechanical validators
-├── review_pipeline/                  # Simulated peer review
-├── rubrics/                          # Quality rubrics (×5)
-├── quality_control/                  # Hard-quality gates
-├── long_context/                     # Long-paper handling
-├── memory/                           # Persistent memory protocols
-├── style_guides/                     # Writing voice + tone
-├── schemas/                          # JSON Schemas (×6)
-├── toolchains/                       # Working Python helpers (×7)
-├── datasets/                         # Sample datasets
-├── examples/                         # End-to-end sample papers
-├── publishing/                       # Per-platform install docs
-├── docs/                             # Architecture, merge-report, FAQ, etc.
-├── tests/                            # Lightweight test runner (53 assertions)
-└── assets/                           # LaTeX / chart / diagram helpers
-```
-
----
-
-## Activation
-
-The skill activates on **slash commands** (preferred):
-
-| Command                     | What it does                              |
-| --------------------------- | ----------------------------------------- |
-| `/research <topic>`          | Full empirical research paper             |
-| `/paper <topic>`             | Same as `/research`                       |
-| `/literature-review <topic>` | Systematic / scoping / narrative review   |
-| `/whitepaper <topic>`        | Industry / technical whitepaper            |
-| `/thesis <topic>`            | Thesis / dissertation chapter             |
-| `/survey <topic>`            | State-of-the-art / survey paper            |
-| `/policy <topic>`            | Policy brief or full policy paper          |
-
-…or on **natural-language requests** matching academic-writing intents.
-
-It does **not** activate for blog posts, tweets, marketing copy, or
-single-paragraph answers.
-
----
-
-## Quality gates
-
-A paper is **not done** until it passes:
-
-- ≥ 1500 words (configurable in `manifest.json`)
-- ≥ 8 references with DOIs / URLs
-- ≥ 1 figure or table
-- All `must_include_sections` present (abstract, intro, methodology,
-  results, discussion, limitations, conclusion, references)
-- `must_include_blocks`: plain_english_summary, reproducibility_statement,
-  future_work
-- `rubrics/academic-quality.md` mean score ≥ 4 / 5
-- All three reviewer personas score ≥ 3.0
-- All `[CITATION NEEDED]` and `[UNVERIFIED]` flags resolved or surfaced
-  in `Known-gaps.md`
-
-Failures surface in `Known-gaps.md` — never silently swallowed.
-
----
-
-## Optional Python toolchain
-
-The skill emits Markdown tables + Mermaid diagrams by default (works
-everywhere). To enable real chart images and statistical validation:
+### Convert the result to PDF / DOCX
 
 ```bash
-python -m pip install --upgrade \
-    pandas numpy scipy statsmodels \
-    matplotlib seaborn plotly scikit-learn pyyaml
-```
-
-Verify:
-
-```bash
-python toolchains/generate_charts.py --self-test
-python toolchains/analyze_data.py --self-test
-node tests/test-runner.js
+python skills/research-paper/toolchains/convert_output.py \
+    --input ./gnn-fraud-detection/paper-final.md \
+    --to pdf \
+    --out paper.pdf
 ```
 
 ---
 
-## Try it
+## What "done" means
 
-After installing, in your agent session:
+A paper is delivered only after passing every quality gate:
 
-> `/research "Graph neural networks for fraud detection" --style ieee --depth comprehensive`
+- ≥ 1500 words (configurable).
+- ≥ 8 references with verified DOIs.
+- ≥ 1 figure or table.
+- All required sections present (abstract, intro, methodology,
+  results, discussion, limitations, conclusion, references).
+- Plain-English summary present.
+- Reproducibility statement present.
+- Future Work section present.
+- Academic-quality rubric mean ≥ 4 / 5.
+- All three reviewer personas score ≥ 3.0.
+- All `[CITATION NEEDED]` and `[UNVERIFIED]` flags resolved or
+  surfaced in `Known-gaps.md`.
 
-> `/literature-review "Retrieval-augmented generation in software engineering" --systematic --sources 50`
-
-> "Analyze this CSV and write a findings report. [data.csv attached]"
-
-You'll see the orchestrator walk through plan → research → analyze →
-visualize → draft → cite → validate → review → ship and produce a
-complete, publication-grade artifact.
-
----
-
-## Extending
-
-The skill is modular:
-
-- **Add a venue:** drop a template in `templates/<venue>.md`, add
-  style notes in `academic_formats/<venue>.md`, register the trigger
-  in `manifest.json` and `SKILL.md §4`.
-- **Add a citation style:** extend `citation_engine/citation-styles.md`
-  and `toolchains/format_bibliography.py`.
-- **Add a chart type:** extend `visualization_engine/decision-engine.md`
-  and `toolchains/generate_charts.py`.
-- **Add a sub-agent:** extend `instructions/multi-agent.md` with the
-  new agent's contract.
-
-See **[`docs/extending.md`](docs/extending.md)** for the full guide.
+Failures surface in `Known-gaps.md`. Never silent.
 
 ---
 
 ## Compatibility
 
-This is a runtime-neutral agent skill. The `npx skills` installer
-detects and installs into 50+ agent runtimes including:
+`npx skills add` auto-detects and installs into 50+ agent runtimes:
 
-| Universal agents | Symlink-supported agents |
+| Universal | Symlink-supported |
 |---|---|
-| Amp, Antigravity, Cline, Codex, Cursor (+10 more) | AiderDesk, Augment, IBM Bob, Claude Code, OpenCode (+35 more) |
+| Amp, Antigravity, Cline, Codex, Cursor, +10 more | AiderDesk, Augment, IBM Bob, Claude Code, OpenCode, +35 more |
 
 Run `npx skills add aniketkrs/research-paper --list` to see the full
 list of agents detected on your machine.
+
+---
+
+## Repo structure
+
+```
+research-paper/
+├── README.md, LICENSE, CHANGELOG.md, INSTALLATION.md, package.json
+├── bin/install.js               ← direct npx installer
+├── tests/test-runner.js         ← 116/116 tests pass
+├── docs/                        ← architecture, design decisions, FAQ
+└── skills/
+    ├── research-paper/          ← writes papers (106 files)
+    ├── get-research-paper/      ← finds papers (20 files)
+    └── read-research-paper/     ← reads any paper (26 files)
+```
+
+Each skill is self-contained — manifest, instructions, prompts,
+templates, schemas, toolchains, examples, sources, tests.
+
+---
+
+## Optional Python toolchain
+
+The skills work with **just** filesystem read/write. They emit
+Markdown tables and Mermaid diagrams as the always-available default.
+
+To enable real charts, statistical validation, multi-format file I/O,
+and Pandoc output:
+
+```bash
+# Charts + statistical validation (research-paper)
+pip install pandas numpy scipy statsmodels matplotlib seaborn pyyaml
+
+# Multi-format file reading (read-research-paper)
+pip install pdfplumber python-docx python-pptx openpyxl \
+            beautifulsoup4 striprtf ebooklib pytesseract Pillow
+
+# Multi-format output (research-paper) - install Pandoc + LaTeX system-wide
+# macOS:    brew install pandoc && brew install --cask mactex-no-gui
+# Linux:    apt install pandoc texlive
+# Windows:  choco install pandoc miktex
+```
+
+When any tool is missing, the skill detects it and falls back —
+never silent failure, always a clear "install X to enable" message.
+
+---
+
+## Extending
+
+The skills are modular. Each one is a folder with a clear extension
+boundary.
+
+- **Add a new venue** (e.g., LNCS): drop a template in
+  `templates/<venue>.md` + register in `manifest.json`.
+- **Add a new citation style**: extend
+  `citation_engine/citation-styles.md` and
+  `toolchains/format_bibliography.py`.
+- **Add a new chart type**: extend
+  `visualization_engine/decision-engine.md` and
+  `toolchains/generate_charts.py`.
+- **Add a new file format**: extend
+  `read-research-paper/toolchains/read_any_file.py` and
+  `read-research-paper/sources/file-formats.md`.
+
+Full extension guide: [`docs/extending.md`](docs/extending.md).
+
+---
+
+## Tests
+
+Lightweight test suite in `tests/test-runner.js`:
+
+```bash
+node tests/test-runner.js
+```
+
+Covers:
+- File structure (every required file present).
+- SKILL.md frontmatter (valid YAML).
+- manifest.json (valid JSON, required fields).
+- JSON Schemas (paper-schema, citation-schema, visual-paper schema, etc.).
+- Python toolchain self-tests (graceful degradation).
+- Citation pipeline smoke test against fixtures.
+
+**116/116 tests pass.**
+
+---
+
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| Skill never activates | Restart your agent session after install | |
+| Charts come out as Markdown only | Python plotting deps missing | `pip install pandas matplotlib seaborn` |
+| Can't read a `.pdf` | PDF library missing | `pip install pdfplumber` |
+| Can't read a `.docx` | DOCX library missing | `pip install python-docx` |
+| Can't OCR an image | OCR not installed | `pip install pytesseract Pillow` + install Tesseract |
+| Can't convert to PDF | Pandoc / LaTeX missing | install Pandoc + a LaTeX engine |
+| Skill activates for unrelated requests | Trigger patterns too broad | edit `manifest.json → trigger.patterns` |
+| Output truncated mid-section | Context pressure | switch to multi-file output (`--depth comprehensive`) |
 
 ---
 
@@ -368,6 +479,21 @@ MIT — see [LICENSE](LICENSE).
 Issues and PRs welcome at
 [github.com/aniketkrs/research-paper](https://github.com/aniketkrs/research-paper).
 
-The merge story (how v2.0 was built from `research-paper-writer` and
-`research-paper-engine`) is in
-**[`docs/merge-report.md`](docs/merge-report.md)**.
+When filing an issue, please include:
+- Your runtime (Claude Code, OpenCode, etc.)
+- The slash command or prompt that triggered the issue
+- The contents of `Known-gaps.md` if any
+- The relevant `validation-report.md` if any
+
+---
+
+## Versioning
+
+| Version | Highlights |
+|---|---|
+| **2.3.0** | Multi-format file I/O: read PDF/DOCX/PPTX/XLSX/EPUB/images; write PDF/DOCX/HTML/LaTeX/EPUB/RTF/ODT/PPTX |
+| 2.2.0 | Added `read-research-paper` skill (visual paper reading) |
+| 2.1.0 | Added `get-research-paper` skill (paper discovery) |
+| 2.0.x | Initial release of `research-paper` skill (paper writing) |
+
+See [CHANGELOG.md](CHANGELOG.md) for the full history.

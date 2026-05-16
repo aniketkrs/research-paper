@@ -2,7 +2,7 @@
 name: read-research-paper
 description: Renders ANY research paper (URL / arXiv ID / DOI / PDF / pasted text) into a visually engaging multi-format reading experience — with mind maps, method flowcharts, key-finding infographics, comparison tables, related-work timelines, and a plain-English layer alongside the technical content. Activates on slash commands (`/read-research-paper`, `/read-paper`, `/explain-paper`, `/visualize-paper`) and natural-language requests like "read this research paper [URL]", "explain this paper [URL]", "make this paper visual [URL]". Caches every fetched paper locally so re-asks are instant. Ships with a bundled corpus of canonical papers for offline fallback. Hands off to `research-paper` for citation reuse and to `get-research-paper` for related-work expansion. Runtime-neutral.
 license: MIT
-version: 1.0.0
+version: 1.1.0
 ---
 
 # Read Research Paper
@@ -43,7 +43,45 @@ folders and is loaded on demand.
 - An arXiv ID: `2403.01234` or `cs.LG/0701002`
 - A DOI: `10.1145/3589334`
 - Pasted text: the paper's abstract or full body
-- A local file path to a PDF or Markdown file
+- **A local file** in any supported format (see below).
+
+### Supported file formats
+
+The skill reads **any of these** as input:
+
+| Format    | Extensions             | Library used                | Always available?       |
+| --------- | ---------------------- | --------------------------- | ----------------------- |
+| Markdown   | `.md`, `.markdown`     | stdlib                      | yes                      |
+| Plain text | `.txt`                 | stdlib                      | yes                      |
+| LaTeX      | `.tex`, `.latex`       | stdlib + regex de-LaTeX      | yes                      |
+| JSON       | `.json`                 | stdlib                      | yes                      |
+| HTML       | `.html`, `.htm`         | beautifulsoup4 (or regex)   | yes (regex fallback)     |
+| CSV / TSV  | `.csv`, `.tsv`          | pandas (or stdlib)          | yes (basic via stdlib)   |
+| RTF        | `.rtf`                  | striprtf (or regex)         | yes (regex fallback)     |
+| **PDF**     | `.pdf`                  | pdfplumber / pypdf          | install one              |
+| **DOCX**    | `.docx`                 | python-docx                 | install                  |
+| **PPTX**    | `.pptx`                 | python-pptx                 | install                  |
+| **XLSX**    | `.xlsx`, `.xls`         | pandas + openpyxl            | install                  |
+| **EPUB**    | `.epub`                 | ebooklib                    | install                  |
+| **Images**  | `.png`, `.jpg`, `.tiff`, `.bmp` | pytesseract + PIL    | install (OCR)            |
+
+One-line install for everything:
+
+```bash
+pip install pdfplumber python-docx python-pptx pandas openpyxl \
+            beautifulsoup4 striprtf ebooklib pytesseract Pillow
+```
+
+(Plus install Tesseract OCR system-wide for images.)
+
+The reader is `toolchains/read_any_file.py`. Self-test:
+
+```bash
+python toolchains/read_any_file.py --self-test
+python toolchains/read_any_file.py --list-formats
+```
+
+Full reference: `sources/file-formats.md`.
 
 ### Common options
 

@@ -1,6 +1,6 @@
 {
   "name": "@aniketkrs/research-paper",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Three complementary agent skills for academic research: research-paper (writes), get-research-paper (finds), read-research-paper (visualizes any paper from URL/arXiv/DOI/PDF). Install via npx skills add aniketkrs/research-paper.",
   "keywords": [
     "claude",

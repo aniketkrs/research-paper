@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/anthropic-agent-skill.json",
   "name": "read-research-paper",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Renders any research paper (URL / arXiv ID / DOI / PDF / pasted text) into a visually engaging multi-format reading experience — mind maps, method flowcharts, key-finding infographics, comparison tables, related-work timelines, and a plain-English layer alongside the technical content. Caches everything locally; ships a bundled corpus of canonical papers for offline fallback.",
   "author": "Aniket Kumar (aniketkrs)",
   "license": "MIT",
@@ -96,6 +96,12 @@
     "pasted-text"
   ],
 
+  "supported_input_formats": [
+    "md", "markdown", "txt", "tex", "latex", "html", "htm",
+    "json", "csv", "tsv", "pdf", "docx", "pptx", "xlsx", "xls",
+    "rtf", "epub", "png", "jpg", "jpeg", "tiff", "tif", "bmp", "gif"
+  ],
+
   "supported_visuals": [
     "mind-map",
     "method-flowchart",
@@ -122,9 +128,18 @@
       "requests>=2.31",
       "feedparser>=6.0",
       "pyyaml>=6.0",
+      "pdfplumber>=0.10",
       "pypdf>=4.0",
-      "matplotlib>=3.7",
-      "pandas>=2.0"
+      "python-docx>=1.0",
+      "python-pptx>=0.6",
+      "openpyxl>=3.1",
+      "pandas>=2.0",
+      "beautifulsoup4>=4.12",
+      "ebooklib>=0.18",
+      "striprtf>=0.0.26",
+      "pytesseract>=0.3",
+      "Pillow>=10.0",
+      "matplotlib>=3.7"
     ]
   },
 
@@ -165,12 +180,14 @@
     "sources": [
       "sources/arxiv.md",
       "sources/pdf-extraction.md",
-      "sources/paper-parsing.md"
+      "sources/paper-parsing.md",
+      "sources/file-formats.md"
     ],
     "schemas": ["schemas/visual-paper.json"],
     "toolchains": [
       "toolchains/fetch_paper.py",
-      "toolchains/extract_pdf.py"
+      "toolchains/extract_pdf.py",
+      "toolchains/read_any_file.py"
     ],
     "cache": ["cache/README.md"],
     "corpus": [

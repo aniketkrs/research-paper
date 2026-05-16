@@ -315,11 +315,13 @@ console.log("\n• read-research-paper skill structure (skills/read-research-pap
   "schemas/visual-paper.json",
   "toolchains/fetch_paper.py",
   "toolchains/extract_pdf.py",
+  "toolchains/read_any_file.py",
   "cache/README.md",
   "corpus/README.md",
   "corpus/anchor-papers.yaml",
   "corpus/topics-index.yaml",
   "examples/sample-visual-output.md",
+  "sources/file-formats.md",
 ].forEach((f) => test(`read-research-paper/${f}`, () => readSkillFile(f)));
 
 console.log("\n• read-research-paper SKILL.md frontmatter");
@@ -379,6 +381,48 @@ test("extract_pdf.py --self-test", () => {
     throw new Error("self-test failed");
   }
   assert(/re stdlib: True/.test(r.out), "re module not detected");
+});
+test("read_any_file.py --self-test", () => {
+  const r = tryPythonRead(["toolchains/read_any_file.py", "--self-test"]);
+  if (r.code !== 0) {
+    if (VERBOSE) console.log(r.err);
+    throw new Error("self-test failed");
+  }
+  assert(/Always-available stdlib readers/.test(r.out), "missing stdlib readers section");
+});
+test("read_any_file.py --list-formats lists pdf, docx, pptx", () => {
+  const r = tryPythonRead(["toolchains/read_any_file.py", "--list-formats"]);
+  if (r.code !== 0) throw new Error("list-formats failed");
+  assert(/\.pdf/.test(r.out), "pdf not listed");
+  assert(/\.docx/.test(r.out), "docx not listed");
+  assert(/\.pptx/.test(r.out), "pptx not listed");
+  assert(/\.xlsx/.test(r.out), "xlsx not listed");
+  assert(/\.tex/.test(r.out), "tex not listed");
+  assert(/\.html/.test(r.out), "html not listed");
+  assert(/\.epub/.test(r.out), "epub not listed");
+});
+
+console.log("\n• research-paper convert_output toolchain (optional)");
+function tryPythonResearchPaper(args) {
+  const r = spawnSync("python", args, { cwd: SKILL, encoding: "utf-8" });
+  return { code: r.status, out: r.stdout || "", err: r.stderr || "" };
+}
+test("convert_output.py --self-test", () => {
+  const r = tryPythonResearchPaper(["toolchains/convert_output.py", "--self-test"]);
+  if (r.code !== 0) {
+    if (VERBOSE) console.log(r.err);
+    throw new Error("self-test failed");
+  }
+  assert(/Pandoc:/.test(r.out), "pandoc check missing");
+  assert(/md\s+\[ok\]/.test(r.out), "md passthrough not reported as available");
+});
+test("convert_output.py --list-formats includes pdf, docx, html", () => {
+  const r = tryPythonResearchPaper(["toolchains/convert_output.py", "--list-formats"]);
+  if (r.code !== 0) throw new Error("list-formats failed");
+  assert(/\bpdf\b/.test(r.out), "pdf not listed");
+  assert(/\bdocx\b/.test(r.out), "docx not listed");
+  assert(/\bhtml\b/.test(r.out), "html not listed");
+  assert(/\bepub\b/.test(r.out), "epub not listed");
 });
 
 // ---------------------------------------------------------------------------
